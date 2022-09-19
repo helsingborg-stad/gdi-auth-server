@@ -3,12 +3,12 @@ import { SigningProfile } from '../profiles'
 
 import {createFakeServices, withAuthApplication} from './test-utils'
 
-describe("GET /auth/profiles", () => {
+describe("GET /api/v1/auth/profiles", () => {
     it("responds with JSON", async () => withAuthApplication(
         createFakeServices(),
         async server => {
             const response = await request(server)
-                .get('/auth/profiles')
+                .get('/api/v1/auth/profiles')
                 .set('Accept', 'application/json')
 
             expect(response.headers["content-type"]).toMatch(/json/)
@@ -18,7 +18,7 @@ describe("GET /auth/profiles", () => {
         createFakeServices(),
         async server => {
             const {body} = await request(server)
-                .get('/auth/profiles')
+                .get('/api/v1/auth/profiles')
                 .set('Accept', 'application/json')
             expect(Array.isArray(body)).toBeTruthy()
             for(let p of (body as SigningProfile[])) {

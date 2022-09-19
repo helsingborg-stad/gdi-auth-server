@@ -7,7 +7,7 @@ tags:
   - name: Web authentication
     description: Authentication operations
 paths:
-  /auth/login:
+  /api/v1/auth/login:
     get:
       operationId: login
       summary: Navigate (redirect) to login page
@@ -28,7 +28,7 @@ paths:
       responses:
         '302':
           description: Standard HTTP redirect result with target location set in headers
-  /auth/profiles:
+  /api/v1/auth/profiles:
     get:
       operationId: profiles
       summary: Get signing profiles
@@ -43,7 +43,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Profile'
-  /auth/token:
+  /api/v1/auth/token:
     get:
       operationId: token
       summary: Create signed token from authentication
@@ -67,7 +67,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SignResponse'
-  /auth/test-landing-page:
+  /api/v1/auth/test-landing-page:
     get:
       operationId: testLandingPage
       summary: Fake return page

@@ -1,7 +1,7 @@
 import * as request from 'supertest'
 import { createFakeServices, withAuthApplication } from "./test-utils"
 
-describe("GET /auth/login", () => {
+describe("GET /api/v1/auth/login", () => {
     const fakeReturn = 'https://www.example.com/ninja'
 
     it('redirects to whatever Visma says', () => withAuthApplication(
@@ -17,7 +17,7 @@ describe("GET /auth/login", () => {
         async server => {
             const fakeReturn = 'https://www.example.com/ninja'
             const {status, headers} = await request(server)
-                .get(`/auth/login?redirectUrl=whateverInThisStageOfProcess.com`)
+                .get(`/api/v1/auth/login?redirectUrl=whateverInThisStageOfProcess.com`)
             expect(status).toEqual(302)
             expect(headers['location']).toBe(fakeReturn)
         }))

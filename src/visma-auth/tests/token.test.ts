@@ -3,12 +3,12 @@ import { createFakeServices, withAuthApplication } from "./test-utils"
 import * as jwt from 'jsonwebtoken'
 
 
-describe("GET /auth/token", () => {
+describe("GET /api/v1/auth/token", () => {
     it("validates its parameters", async () => withAuthApplication(
         createFakeServices(),
         async server => {
             const response = await request(server)
-                .get('/auth/token?totallyWrongInput=123')
+                .get('/api/v1/auth/token?totallyWrongInput=123')
                 .set('Accept', 'application/json')
             expect(response.status).toEqual(400)   
         }))
@@ -27,7 +27,7 @@ describe("GET /auth/token", () => {
         }),
         async server => {
             const {status, body: {jwt: token}} = await request(server)
-                .get('/auth/token?ts_session_id=test-id-123')
+                .get('/api/v1/auth/token?ts_session_id=test-id-123')
                 .set('Accept', 'application/json')
             expect(status).toEqual(200)
             expect(token).toBeTruthy()
