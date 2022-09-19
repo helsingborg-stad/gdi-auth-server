@@ -1,6 +1,7 @@
 import * as request from 'superagent'
 import { getEnv } from '../util/get-env'
-const debug = require('debug')('visma-api')
+import * as Debug from 'debug'
+const debug = Debug('visma-api')
 
 export interface VismaAuthConfiguration {
     baseUrl: string,

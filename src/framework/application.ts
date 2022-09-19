@@ -1,4 +1,5 @@
-const debug = require('debug')('application')
+import * as Debug from 'debug'
+const debug = Debug('application')
 import * as Koa from 'koa'
 import * as Router from 'koa-router'
 import OpenAPIBackend, { Options } from 'openapi-backend'
