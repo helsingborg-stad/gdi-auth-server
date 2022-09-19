@@ -1,0 +1,138 @@
+openapi: 3.0.0
+info:
+  title: GDI Authentication API
+  description: Common broker for GDI authentication against Visma Federation Services (BankId, Freya).
+  version: 1.0.0
+tags:
+  - name: Web authentication
+    description: Authentication operations
+paths:
+  /auth/login:
+    get:
+      operationId: login
+      summary: Navigate (redirect) to login page
+      description: Responds with a redirect to actual login page. Clients are encouraged to use this endpoint in standard HTML <a href=".../login">
+      tags:
+        - Web authentication
+      parameters:
+        - name: redirectUrl
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: relayState
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '302':
+          description: Standard HTTP redirect result with target location set in headers
+  /auth/profiles:
+    get:
+      operationId: profiles
+      summary: Get signing profiles
+      tags:
+        - Web authentication
+      responses:
+        '200':
+          description: List of supported profiles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Profile'
+  /auth/token:
+    get:
+      operationId: token
+      summary: Create signed token from authentication
+      tags:
+        - Web authentication
+      parameters:
+        - name: ts_session_id
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: profile
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Standard HTTP redirect result with target location set in headers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignResponse'
+  /auth/test-landing-page:
+    get:
+      operationId: testLandingPage
+      summary: Fake return page
+      description: "Fake return page for testing purposes. Usage: /auth/login?redirectUrl=.../fake-login-page"
+      tags:
+        - Testing
+      parameters:
+        - name: ts_session_id
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: relayState
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Dump of session
+components:
+  schemas:
+    Profile:
+      type: object
+      properties:
+        id:
+          type: string
+        description:
+          type: string
+        maxAge:
+          type: integer
+        claims:
+          type: object
+          properties:
+            issuer:
+              type: string
+            audience:
+              type: string
+            subject:
+              type: string
+            expiresIn:
+              type: string
+            notBefore:
+              type: string
+    SignResponse:
+      type: object
+      required:
+        - jwt
+      properties:
+        jwt:
+          type: string
+    JwtClaims:
+      type: object
+      properties:
+        expiresIn:
+          type: integer
+        notBefore:
+          type: integer
+        iss:
+          type: string
+        sub:
+          type: string
+        aud:
+          type: string
+        exp:
+          type: integer
+
+
