@@ -1,5 +1,5 @@
 import * as request from 'supertest'
-import { createFakeServices, withAuthApplication } from './test-utils'
+import { createFakeServices, notImplemented, withAuthApplication } from './test-utils'
 
 describe('GET /api/v1/auth/login', () => {
 	const fakeReturn = 'https://www.example.com/ninja'
@@ -7,7 +7,7 @@ describe('GET /api/v1/auth/login', () => {
 	it('redirects to whatever Visma says', () => withAuthApplication(
 		createFakeServices({
 			visma: {
-				getSession: async () => { throw new Error ('not implemented') },
+				getSession: notImplemented,
 				login: async () => ({
 					redirectUrl: fakeReturn,
 					sessionId: 'some-fake-session-id',
