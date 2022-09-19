@@ -30,4 +30,4 @@ port=8080 yarn start
 
 ## Local testing?
 
-Navigate to [http://localhost:3000/auth/login?redirectUrl=http://localhost:3000/fake-login-callback](http://localhost:3000/auth/login?redirectUrl=http://localhost:3000/fake-login-callback)
+Navigate to http://localhost:3000/auth/login?redirectUrl=http://localhost:3000/auth/test-landing-page
