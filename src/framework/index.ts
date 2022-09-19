@@ -1,3 +1,3 @@
-import { createApplication } from "./application"
+import { createApplication } from './application'
 
 export { createApplication }

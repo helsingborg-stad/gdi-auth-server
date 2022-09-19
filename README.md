@@ -31,3 +31,7 @@ port=8080 yarn start
 ## Local testing?
 
 Navigate to http://localhost:3000/auth/login?redirectUrl=http://localhost:3000/auth/test-landing-page
+
+## Linting
+
+This project uses [ESLint](https://eslint.org/) for linting and formatting, with in-editor support for VSCode provided by the [microsoft/ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) extension.

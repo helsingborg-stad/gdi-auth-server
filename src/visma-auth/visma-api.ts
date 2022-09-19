@@ -1,5 +1,5 @@
 import * as request from 'superagent'
-import { getEnv } from "../util/get-env";
+import { getEnv } from '../util/get-env'
 const debug = require('debug')('visma-api')
 
 export interface VismaAuthConfiguration {
@@ -26,14 +26,14 @@ export interface VismaSession {
 }
 
 export interface VismaAuthService {
-    login: ({callbackUrl, relayState}: {callbackUrl: string, relayState?: string}) => Promise<VismaAuthApiLoginResult>,
-    getSession: ({sessionId}: {sessionId: string}) => Promise<VismaSession>
+    login: ({ callbackUrl, relayState }: {callbackUrl: string, relayState?: string}) => Promise<VismaAuthApiLoginResult>,
+    getSession: ({ sessionId }: {sessionId: string}) => Promise<VismaSession>
 }
 
 const makeUrl = (baseUrl: string, path: string) => new URL(path, baseUrl).toString()
 
 const mapNativeSessionToVismaSession = (session: any): VismaSession =>
-    /*
+/*
         Session could look something like
         {
             "sessionId": "...",
@@ -63,65 +63,65 @@ const mapNativeSessionToVismaSession = (session: any): VismaSession =>
             }
         }        
     */
-   session?.errorObject?.code // described error in response?
-   ? ({
-    session,
-    error: {
-        code: session?.errorObject?.code,
-        message: session?.errorObject?.message
-    }})
-    : session?.userAttributes?.serialNumber // described person in response?
-    ? ({
-        session,
-        user: {
-            ssn: session?.userAttributes?.serialNumber,
-            name: session?.userAttributes?.CN
-        }
-    })
-    : ({
-        session,
-        error: {
-            code: 'UNKNOWN',
-            message: 'Internal validation failed'
-        }
-    })
+	session?.errorObject?.code // described error in response?
+		? ({
+			session,
+			error: {
+				code: session?.errorObject?.code,
+				message: session?.errorObject?.message,
+			} })
+		: session?.userAttributes?.serialNumber // described person in response?
+			? ({
+				session,
+				user: {
+					ssn: session?.userAttributes?.serialNumber,
+					name: session?.userAttributes?.CN,
+				},
+			})
+			: ({
+				session,
+				error: {
+					code: 'UNKNOWN',
+					message: 'Internal validation failed',
+				},
+			})
 
 
 const tap = <T>(tapper: (v: T) => any): ((v: T) => T) => (v: T) => (tapper(v), v)
 
 export const getVismaAuthConfigurationFromEnv = (): VismaAuthConfiguration => ({
-    baseUrl: getEnv({key: 'VISMA_AUTH_BASEURL', trim: true, validate: v => !!new URL(v)}),
-    customerKey: getEnv({key: 'VISMA_AUTH_CUSTOMERKEY', trim: true}),
-    serviceKey: getEnv({key: 'VISMA_AUTH_SERVICEKEY', trim: true})
+	baseUrl: getEnv({ key: 'VISMA_AUTH_BASEURL', trim: true, validate: v => !!new URL(v) }),
+	customerKey: getEnv({ key: 'VISMA_AUTH_CUSTOMERKEY', trim: true }),
+	serviceKey: getEnv({ key: 'VISMA_AUTH_SERVICEKEY', trim: true }),
 })
 
-export const createVismaAuthService = ({baseUrl, customerKey, serviceKey}: VismaAuthConfiguration): VismaAuthService => ({
-    login: ({callbackUrl, relayState}) => request
-        .get(makeUrl(baseUrl, '/json1.1/Login'))
-        .query({
-            customerKey: customerKey,
-            serviceKey: serviceKey,
-            relayState,
-            callbackUrl
-        })
-        .set('Accept', 'application/json')
-        .then(({body}) => body as VismaAuthApiLoginResult)
-        .then(tap(result => debug({
-            '/json1.1/Login': result
-        })))
-        ,
+export const createVismaAuthService = ({ baseUrl, customerKey, serviceKey }: VismaAuthConfiguration): VismaAuthService => ({
+	login: ({ callbackUrl, relayState }) => request
+		.get(makeUrl(baseUrl, '/json1.1/Login'))
+		.query({
+			customerKey: customerKey,
+			serviceKey: serviceKey,
+			relayState,
+			callbackUrl,
+		})
+		.set('Accept', 'application/json')
+		.then(({ body }) => body as VismaAuthApiLoginResult)
+		.then(tap(result => debug({
+			'/json1.1/Login': result,
+		})))
+	,
 
-    getSession: ({sessionId}) => request
-        .get(makeUrl(baseUrl, '/json1.1/GetSession'))
-        .query({
-            customerKey: customerKey,
-            serviceKey: serviceKey,
-            sessionId
-        })
-        .set('Accept', 'application/json')
-        .then(({body}) => body)
-        .then(mapNativeSessionToVismaSession)
-        .then(tap(v => debug({
-            '/json1.1/GetSession': v
-        })))
+	getSession: ({ sessionId }) => request
+		.get(makeUrl(baseUrl, '/json1.1/GetSession'))
+		.query({
+			customerKey: customerKey,
+			serviceKey: serviceKey,
+			sessionId,
+		})
+		.set('Accept', 'application/json')
+		.then(({ body }) => body)
+		.then(mapNativeSessionToVismaSession)
+		.then(tap(v => debug({
+			'/json1.1/GetSession': v,
+		}))),
 })

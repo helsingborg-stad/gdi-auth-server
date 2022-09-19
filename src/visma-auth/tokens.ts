@@ -1,6 +1,6 @@
 import * as jwt from 'jsonwebtoken'
-import { getEnv } from "../util/get-env"
-import { VismaSession } from "./visma-api"
+import { getEnv } from '../util/get-env'
+import { VismaSession } from './visma-api'
 import { SigningProfile } from './profiles'
 
 export interface TokenServiceConfiguration {
@@ -15,32 +15,32 @@ export interface TokenService {
 
 
 export const getTokenServiceConfigurationFromEnv = (): TokenServiceConfiguration => ({
-    secretKey: getEnv({key: 'JWT_SECRET_KEY', trim: true})
+	secretKey: getEnv({ key: 'JWT_SECRET_KEY', trim: true }),
 })
 
-export function createTokenService ({secretKey}: TokenServiceConfiguration): TokenService {
-    const createVismaSessionToken = (session: VismaSession, profile: SigningProfile) => session?.user
-        ? jwt.sign({
-            ...session.user,
-            sign_profile: profile.id
-        }, secretKey, {
-            ...profile.claims,
-            subject: `ssn://${session.user.ssn}`   
-        })
-        : ''
+export function createTokenService ({ secretKey }: TokenServiceConfiguration): TokenService {
+	const createVismaSessionToken = (session: VismaSession, profile: SigningProfile) => session?.user
+		? jwt.sign({
+			...session.user,
+			sign_profile: profile.id,
+		}, secretKey, {
+			...profile.claims,
+			subject: `ssn://${session.user.ssn}`,   
+		})
+		: ''
 
-    const decodeToken = (token: string): any => token && jwt.decode(token)
+	const decodeToken = (token: string): any => token && jwt.decode(token)
 
-    const verifyToken = (token: string): any => {
-        try {
-            return token &&  jwt.verify(token, secretKey)
-        } catch (err) {
-            return null
-        }
-    } 
-    return {
-        createVismaSessionToken,
-        decodeToken,
-        verifyToken
-    }
+	const verifyToken = (token: string): any => {
+		try {
+			return token &&  jwt.verify(token, secretKey)
+		} catch (err) {
+			return null
+		}
+	} 
+	return {
+		createVismaSessionToken,
+		decodeToken,
+		verifyToken,
+	}
 }
