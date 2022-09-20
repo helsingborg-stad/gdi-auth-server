@@ -16,6 +16,7 @@ const createPortPool = () => {
 
 const portPool = createPortPool()
 
+export const notImplemented = () => { throw new Error('not implemented') }
 export const createFakeServices = (patch: Partial<AuthServices> = null): AuthServices => ({
 	profiles: createProfileService({
 		claims: {
@@ -27,8 +28,8 @@ export const createFakeServices = (patch: Partial<AuthServices> = null): AuthSer
 		} }),
 	tokens: createTokenService({ secretKey: 'test secret key' }),
 	visma: {
-		login: () => { throw new Error('not implemented') },
-		getSession: () => { throw new Error('not implemented') },
+		login: notImplemented,
+		getSession: notImplemented,
 	},
 	...patch,
 })
