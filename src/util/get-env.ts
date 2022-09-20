@@ -13,7 +13,7 @@ const tryValidate = (key: string, value: string, validate: (v: string) => boolea
 	try {
 		return validate(value)
 	} catch {
-		throw Error(`Failed to read and validate environment ${key}="${process.env[key]}"`)
+		throw new Error(`Failed to read and validate environment ${key}="${process.env[key]}"`)
 	}
 }
 

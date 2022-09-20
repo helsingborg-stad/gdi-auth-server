@@ -2,7 +2,7 @@ import * as Debug from 'debug'
 const debug = Debug('application')
 import * as Koa from 'koa'
 import * as Router from 'koa-router'
-import OpenAPIBackend from 'openapi-backend'
+import OpenAPIBackend, { Context } from 'openapi-backend'
 
 import { Application, ApplicationModule } from './types'
 
@@ -18,6 +18,42 @@ const mapValues = <T, S>(obj: Record<string, T>, valueFn: ((v: T) => S)): Record
 		[k]: valueFn(v),
 	}), {} as Record<string, S>)
 		
+
+const performResponseValidation = (c: Context, ctx: Koa.Context) => {
+	/**
+	 * Perform response validation
+	 * 
+	 * Typically, this is done in tests only
+	 * 
+	 * To make life simpler, we only validate 2xx results
+	 * Also, header validation is probably not needed
+	 */
+	const { status } = ctx
+	if (!((status >= 200) && (status < 300))) {
+		return
+	}
+	// https://github.com/anttiviljami/openapi-backend#response-validation
+	([
+		c.api.validateResponse(ctx.body, c.operation),
+		/*
+		c.api.validateResponseHeaders(ctx.headers, c.operation, {
+			statusCode: ctx.status,
+			setMatchType: SetMatchType.Superset,
+		}),
+		*/
+	])
+		.map(({ errors }) => errors)
+		.filter(errors => errors && errors.length)
+		.map(errors => {
+			debug({
+				operation: c.operation,
+				errors,
+			})
+			ctx.throw(502)
+		})
+}
+	
+
 export function createApplication({ openApiDefinitionPath, validateResponse }: CreateApplicationArgs): Application {
 	// create app
 	const app = new Koa()
@@ -36,39 +72,9 @@ export function createApplication({ openApiDefinitionPath, validateResponse }: C
 		},
 	})
 	
+	// register response validation if wanted
 	validateResponse && api.register({
-		postResponseHandler: (c, ctx) => {
-			/**
-			 * Perform response validation
-			 * 
-			 * Typically, this is done in tests only
-			 * 
-			 * To make life simpler, we only validate 2xx results
-			 */
-			const { status } = ctx
-			if (!((status >= 200) && (status < 300))) {
-				return
-			}
-			// https://github.com/anttiviljami/openapi-backend#response-validation
-			([
-				c.api.validateResponse(ctx.body, c.operation),
-				/*
-				c.api.validateResponseHeaders(ctx.headers, c.operation, {
-					statusCode: ctx.status,
-					setMatchType: SetMatchType.Superset,
-				}),
-				*/
-			])
-				.map(({ errors }) => errors)
-				.filter(errors => errors && errors.length)
-				.map(errors => {
-					console.error({
-						operation: c.operation,
-						errors,
-					})
-					ctx.throw(502)
-				})
-		},
+		postResponseHandler: performResponseValidation,
 	})
 
 	return {

@@ -1,11 +1,14 @@
 import { Server } from 'node:http'
 import { createAuthApp } from '../../auth-app'
-import { Application } from '../../framework/types'
+import { Application, ApplicationContext } from '../../framework/types'
 import { createProfileService } from '../profiles'
 import { createTokenService } from '../tokens'
 import { AuthServices } from '../types'
 
 const TEST_PORT = 4444
+
+// a simple module that prevents errors to go to console.error
+const silentErrorsModule = ({ app }: ApplicationContext) => app.on('error', () => (void 0))
 
 export const notImplemented = () => { throw new Error('not implemented') }
 
@@ -36,8 +39,5 @@ export const withApplication = async (application: Application, handler: (server
 }
 
 export const withAuthApplication = async (services: AuthServices, handler: (server: Server) => Promise<void>): Promise<void> => withApplication(
-	createAuthApp({
-		services,
-		validateResponse: true,
-	}),
+	createAuthApp({ services, validateResponse: true }).use(silentErrorsModule),
 	handler)
