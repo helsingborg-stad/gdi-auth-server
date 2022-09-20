@@ -15,7 +15,7 @@ export interface TokenService {
 
 
 export const getTokenServiceConfigurationFromEnv = (): TokenServiceConfiguration => ({
-	secretKey: getEnv({ key: 'JWT_SECRET_KEY', trim: true }),
+	secretKey: getEnv('JWT_SECRET_KEY'),
 })
 
 export function createTokenService ({ secretKey }: TokenServiceConfiguration): TokenService {

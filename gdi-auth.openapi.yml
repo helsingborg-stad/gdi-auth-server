@@ -92,6 +92,9 @@ components:
   schemas:
     Profile:
       type: object
+      required:
+        - id
+        - description
       properties:
         id:
           type: string

@@ -4,6 +4,9 @@ import { createAuthApp } from './auth-app'
 
 const services: AuthServices = createServicesFromEnv()
 
-createAuthApp(services)
+createAuthApp({
+	services,
+	validateResponse: false,
+})
 	.start(process.env.PORT || 3000)
   

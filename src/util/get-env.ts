@@ -1,6 +1,5 @@
 
 interface GetEnvArgs {
-    key: string,
     trim?: boolean,
     validate?: (v: string) => boolean,
     fallback?: string
@@ -18,7 +17,7 @@ const tryValidate = (key: string, value: string, validate: (v: string) => boolea
 	}
 }
 
-const getEnv = ({ key, trim, validate, fallback }: GetEnvArgs): string => [ process.env[key], fallback ]
+const getEnv = (key: string, { trim, validate, fallback }: GetEnvArgs = { trim: true }): string => [ process.env[key], fallback ]
 	.filter(v => typeof v === 'string')
 	.map(v => trim? v.trim(): v)
 	.filter(v => tryValidate(key, v, validate || (() => true)))

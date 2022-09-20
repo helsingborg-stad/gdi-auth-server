@@ -5,18 +5,10 @@ import { createProfileService } from '../profiles'
 import { createTokenService } from '../tokens'
 import { AuthServices } from '../types'
 
-
-const createPortPool = () => {
-	let nextPort = 4444
-	const acquire = async () => ++nextPort
-	const release = (port: number) => {} // ports.push(port)
-
-	return { acquire, release }
-}
-
-const portPool = createPortPool()
+const TEST_PORT = 4444
 
 export const notImplemented = () => { throw new Error('not implemented') }
+
 export const createFakeServices = (patch: Partial<AuthServices> = null): AuthServices => ({
 	profiles: createProfileService({
 		claims: {
@@ -35,14 +27,17 @@ export const createFakeServices = (patch: Partial<AuthServices> = null): AuthSer
 })
 
 export const withApplication = async (application: Application, handler: (server: Server) => Promise<void>): Promise<void> => {
-	const port = await portPool.acquire()
-	const server = await application.start(port)
+	const server = await application.start(TEST_PORT)
 	try {
 		await handler(server)
 	} finally {
 		await new Promise((resolve, reject) => server.close(err => err ? reject(err) : resolve(null)))
-		portPool.release(port)
 	}
 }
 
-export const withAuthApplication = async (services: AuthServices, handler: (server: Server) => Promise<void>): Promise<void> => withApplication(createAuthApp(services), handler)
+export const withAuthApplication = async (services: AuthServices, handler: (server: Server) => Promise<void>): Promise<void> => withApplication(
+	createAuthApp({
+		services,
+		validateResponse: true,
+	}),
+	handler)

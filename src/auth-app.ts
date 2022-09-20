@@ -5,9 +5,10 @@ import { Application } from './framework/types'
 import { AuthServices } from './visma-auth/types'
 import vismaAuthModule from './visma-auth/visma-auth-module'
 
-export const createAuthApp = (services: AuthServices): Application =>
+export const createAuthApp = ({ services, validateResponse }: {services: AuthServices, validateResponse?: boolean}): Application =>
 	createApplication({
-		definition: './gdi-auth.openapi.yml',
+		openApiDefinitionPath: './gdi-auth.openapi.yml',
+		validateResponse,
 	})
 		.use(webFrameworkModule)
 		.use(swaggerModule)

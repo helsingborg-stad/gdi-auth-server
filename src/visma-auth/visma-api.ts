@@ -91,9 +91,9 @@ const mapNativeSessionToVismaSession = (session: any): VismaSession =>
 const tap = <T>(tapper: (v: T) => any): ((v: T) => T) => (v: T) => (tapper(v), v)
 
 export const getVismaAuthConfigurationFromEnv = (): VismaAuthConfiguration => ({
-	baseUrl: getEnv({ key: 'VISMA_AUTH_BASEURL', trim: true, validate: v => !!new URL(v) }),
-	customerKey: getEnv({ key: 'VISMA_AUTH_CUSTOMERKEY', trim: true }),
-	serviceKey: getEnv({ key: 'VISMA_AUTH_SERVICEKEY', trim: true }),
+	baseUrl: getEnv('VISMA_AUTH_BASEURL', { validate: v => !!new URL(v) }),
+	customerKey: getEnv('VISMA_AUTH_CUSTOMERKEY'),
+	serviceKey: getEnv('VISMA_AUTH_SERVICEKEY'),
 })
 
 export const createVismaAuthService = ({ baseUrl, customerKey, serviceKey }: VismaAuthConfiguration): VismaAuthService => ({

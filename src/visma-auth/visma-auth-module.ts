@@ -8,13 +8,13 @@ export function vismaAuthModule(services: AuthServices): ApplicationModule {
 		profiles: { getBestMatchingProfile, getProfiles },
 	} = services
 
-	const login = async (c, ctx) => {
+	const login = async ctx => {
 		const { query: { redirectUrl, relayState } } = ctx
 		const loginResult = await visma.login({ callbackUrl: redirectUrl, relayState })
 		ctx.redirect(loginResult.redirectUrl)
 	}
 
-	const token = async (c, ctx) => {
+	const token = async ctx => {
 		const { query: { ts_session_id, profile } } = ctx
 		const session = await visma.getSession({ sessionId: ts_session_id })
 		ctx.body = {
@@ -22,11 +22,12 @@ export function vismaAuthModule(services: AuthServices): ApplicationModule {
 		}
 	}
 
-	const profiles = async (c, ctx) => {
+	const profiles = async ctx => {
 		ctx.body = await getProfiles()
+		ctx.status = 200
 	}
 
-	const testLandingPage = async (c, ctx) => {
+	const testLandingPage = async ctx => {
 		const { query: { ts_session_id } } = ctx
 		const session = await visma.getSession({ sessionId: ts_session_id })
 		ctx.body = {
@@ -35,7 +36,7 @@ export function vismaAuthModule(services: AuthServices): ApplicationModule {
 		}
 	}
 
-	return ({ api }: ApplicationContext) => api.register({
+	return ({ registerKoaApi }: ApplicationContext) => registerKoaApi({
 		login,
 		token,
 		profiles,
