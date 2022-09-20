@@ -2,9 +2,9 @@ name: Build and push docker image to github registry.
 
 on:
   release:
-    types: [ published ]
-  paths-ignore:
-      - .github/**
+    types: [published]
+    paths-ignore:
+        - .github/**
 
 
 jobs:
