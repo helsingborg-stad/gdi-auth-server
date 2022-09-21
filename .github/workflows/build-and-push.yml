@@ -58,7 +58,7 @@ jobs:
           owner: helsingborg-stad
           repo: ${{ secrets.GDI_GITOPS_CONFIG_REPO }}
           github_token: ${{ secrets.GDI_GITOPS_TOKEN }}
-          workflow_file_name: update-config.yaml
+          workflow_file_name: update-config.yml
           inputs: '{"sha": "${{ github.sha }}", "app": "${{ secrets.GDI_GITOPS_APP }}"}'
           wait_workflow: false
           ref: main
