@@ -62,7 +62,7 @@ paths:
             type: string
       responses:
         '200':
-          description: Standard HTTP redirect result with target location set in headers
+          description: An issued JWT
           content:
             application/json:
               schema:
@@ -122,6 +122,8 @@ components:
       properties:
         jwt:
           type: string
+        maxAge:
+          type: integer
     JwtClaims:
       type: object
       properties:

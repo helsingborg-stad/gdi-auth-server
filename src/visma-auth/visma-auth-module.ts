@@ -17,8 +17,10 @@ export function vismaAuthModule(services: AuthServices): ApplicationModule {
 	const token = async ctx => {
 		const { query: { ts_session_id, profile } } = ctx
 		const session = await visma.getSession({ sessionId: ts_session_id })
+		const usedProfile = getBestMatchingProfile(profile)
 		ctx.body = {
-			jwt: createVismaSessionToken(session, getBestMatchingProfile(profile)),
+			jwt: createVismaSessionToken(session, usedProfile),
+			maxAge: usedProfile.maxAge,
 		}
 	}
 
@@ -30,8 +32,11 @@ export function vismaAuthModule(services: AuthServices): ApplicationModule {
 	const testLandingPage = async ctx => {
 		const { query: { ts_session_id } } = ctx
 		const session = await visma.getSession({ sessionId: ts_session_id })
+		const profile = getBestMatchingProfile('')
 		ctx.body = {
-			jwt: createVismaSessionToken(session, getBestMatchingProfile('')),
+			jwt: createVismaSessionToken(session, profile),
+			maxAge: profile.maxAge,
+			profile,
 			session,
 		}
 	}
