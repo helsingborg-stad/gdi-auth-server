@@ -9,8 +9,8 @@ export function vismaAuthModule(services: AuthServices): ApplicationModule {
 	} = services
 
 	const login = async ctx => {
-		const { query: { redirectUrl, relayState } } = ctx
-		const loginResult = await visma.login({ callbackUrl: redirectUrl, relayState })
+		const { query: { redirect_url: callbackUrl, relay_state: relayState } } = ctx
+		const loginResult = await visma.login({ callbackUrl, relayState })
 		ctx.redirect(loginResult.redirectUrl)
 	}
 

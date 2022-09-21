@@ -17,7 +17,7 @@ describe('GET /api/v1/auth/login', () => {
 		async server => {
 			const fakeReturn = 'https://www.example.com/ninja'
 			const { status, headers } = await request(server)
-				.get('/api/v1/auth/login?redirectUrl=whateverInThisStageOfProcess.com')
+				.get('/api/v1/auth/login?redirect_url=whateverInThisStageOfProcess.com')
 			expect(status).toEqual(302)
 			expect(headers['location']).toBe(fakeReturn)
 		}))

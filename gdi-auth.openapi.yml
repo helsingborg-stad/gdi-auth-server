@@ -15,12 +15,12 @@ paths:
       tags:
         - Web authentication
       parameters:
-        - name: redirectUrl
+        - name: redirect_url
           in: query
           required: true
           schema:
             type: string
-        - name: relayState
+        - name: relay_state
           in: query
           required: false
           schema:
@@ -71,7 +71,7 @@ paths:
     get:
       operationId: testLandingPage
       summary: Fake return page
-      description: "Fake return page for testing purposes. Usage: /auth/login?redirectUrl=.../fake-login-page"
+      description: "Fake return page for testing purposes. Usage: /auth/login?redirect_url=.../api/v1/auth/test-landing-page"
       tags:
         - Testing
       parameters:

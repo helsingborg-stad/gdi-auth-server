@@ -39,7 +39,7 @@ port=8080 yarn start
 
 ## Local testing?
 
-Navigate to http://localhost:3000/api/v1/auth/login?redirectUrl=http://localhost:3000/api/v1/auth/test-landing-page
+Navigate to http://localhost:3000/api/v1/auth/login?redirect_url=http://localhost:3000/api/v1/auth/test-landing-page
 
 ## Linting
 
