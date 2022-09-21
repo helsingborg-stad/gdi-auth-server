@@ -7,7 +7,8 @@ export interface ApplicationContext {
     app: Koa,
     api: OpenAPIBackend,
     router: typeof Router,
-    application: Application
+    application: Application,
+    registerKoaApi: (handlers: Record<string, Koa.Middleware>) => void
 }
 
 export type ApplicationModule = (context: ApplicationContext) => void

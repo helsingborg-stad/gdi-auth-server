@@ -27,12 +27,11 @@ export interface ProfilesConfiguration {
 
 export const getProfilesConfigurationFromEnv = (): ProfilesConfiguration => ({
 	claims: {
-		issuer: getEnv({ key: 'JWT_SIGN_ISSUER', trim: true, fallback: 'https://www.example.com' }),
-		audience: getEnv({ key: 'JWT_SIGN_AUDIENCE', trim: true, fallback: 'https://example.com' }),
-		expiresIn: getEnv({ key: 'JWT_SIGN_EXPIRES_IN', trim: true, fallback: '12h' }),
-		notBefore: getEnv({ key: 'JWT_SIGN_NOT_BEFORE', trim: true, fallback: '0s' }),
+		issuer: getEnv('JWT_SIGN_ISSUER', { trim: true, fallback: 'https://www.example.com' }),
+		audience: getEnv('JWT_SIGN_AUDIENCE', { trim: true, fallback: 'https://example.com' }),
+		expiresIn: getEnv('JWT_SIGN_EXPIRES_IN', { trim: true, fallback: '12h' }),
+		notBefore: getEnv('JWT_SIGN_NOT_BEFORE', { trim: true, fallback: '0s' }),
 		subject: '<to be decided>',
-        
 	},
 })
 

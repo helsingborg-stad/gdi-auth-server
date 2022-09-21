@@ -1,7 +1,8 @@
+import { stat } from 'fs'
 import * as request from 'supertest'
 import { SigningProfile } from '../profiles'
 
-import { createFakeServices, withAuthApplication } from './test-utils'
+import { createFakeServices, notImplemented, withAuthApplication } from './test-utils'
 
 describe('GET /api/v1/auth/profiles', () => {
 	it('responds with JSON', async () => withAuthApplication(
@@ -25,4 +26,19 @@ describe('GET /api/v1/auth/profiles', () => {
 				expect(typeof p.id).toBe('string')
 			}
 		}))
+	it('responds with 502 on malformed response', async () => withAuthApplication(
+		// NOTE: This test succedds only if response validation is enabled, see createAuthApp(...)
+		createFakeServices({
+			profiles: {
+				getBestMatchingProfile: notImplemented,
+				getProfiles: () => [{ total: 'bogus' } as unknown as SigningProfile],
+			},
+		}),
+		async server => {
+			const { status } = await request(server)
+				.get('/api/v1/auth/profiles')
+				.set('Accept', 'application/json')
+			expect(status).toBe(502)
+		}
+	))
 })

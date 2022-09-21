@@ -8,34 +8,40 @@ export function vismaAuthModule(services: AuthServices): ApplicationModule {
 		profiles: { getBestMatchingProfile, getProfiles },
 	} = services
 
-	const login = async (c, ctx) => {
-		const { query: { redirectUrl, relayState } } = ctx
-		const loginResult = await visma.login({ callbackUrl: redirectUrl, relayState })
+	const login = async ctx => {
+		const { query: { redirect_url: callbackUrl, relay_state: relayState } } = ctx
+		const loginResult = await visma.login({ callbackUrl, relayState })
 		ctx.redirect(loginResult.redirectUrl)
 	}
 
-	const token = async (c, ctx) => {
+	const token = async ctx => {
 		const { query: { ts_session_id, profile } } = ctx
 		const session = await visma.getSession({ sessionId: ts_session_id })
+		const usedProfile = getBestMatchingProfile(profile)
 		ctx.body = {
-			jwt: createVismaSessionToken(session, getBestMatchingProfile(profile)),
+			jwt: createVismaSessionToken(session, usedProfile),
+			maxAge: usedProfile.maxAge,
 		}
 	}
 
-	const profiles = async (c, ctx) => {
+	const profiles = async ctx => {
 		ctx.body = await getProfiles()
+		ctx.status = 200
 	}
 
-	const testLandingPage = async (c, ctx) => {
+	const testLandingPage = async ctx => {
 		const { query: { ts_session_id } } = ctx
 		const session = await visma.getSession({ sessionId: ts_session_id })
+		const profile = getBestMatchingProfile('')
 		ctx.body = {
-			jwt: createVismaSessionToken(session, getBestMatchingProfile('')),
+			jwt: createVismaSessionToken(session, profile),
+			maxAge: profile.maxAge,
+			profile,
 			session,
 		}
 	}
 
-	return ({ api }: ApplicationContext) => api.register({
+	return ({ registerKoaApi }: ApplicationContext) => registerKoaApi({
 		login,
 		token,
 		profiles,

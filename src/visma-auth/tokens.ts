@@ -8,14 +8,14 @@ export interface TokenServiceConfiguration {
 }
 
 export interface TokenService {
-    createVismaSessionToken (session: VismaSession, profile: SigningProfile),
-    decodeToken(token: string): any,
+    createVismaSessionToken (session: VismaSession, profile: SigningProfile)
+    decodeToken(token: string): any
     verifyToken(token: string): any
 }
 
 
 export const getTokenServiceConfigurationFromEnv = (): TokenServiceConfiguration => ({
-	secretKey: getEnv({ key: 'JWT_SECRET_KEY', trim: true }),
+	secretKey: getEnv('JWT_SECRET_KEY'),
 })
 
 export function createTokenService ({ secretKey }: TokenServiceConfiguration): TokenService {
@@ -30,14 +30,14 @@ export function createTokenService ({ secretKey }: TokenServiceConfiguration): T
 		: ''
 
 	const decodeToken = (token: string): any => token && jwt.decode(token)
-
+	
 	const verifyToken = (token: string): any => {
 		try {
 			return token &&  jwt.verify(token, secretKey)
 		} catch (err) {
 			return null
 		}
-	} 
+	}
 	return {
 		createVismaSessionToken,
 		decodeToken,

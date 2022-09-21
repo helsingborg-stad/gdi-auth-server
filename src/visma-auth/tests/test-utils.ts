@@ -1,22 +1,17 @@
 import { Server } from 'node:http'
 import { createAuthApp } from '../../auth-app'
-import { Application } from '../../framework/types'
+import { Application, ApplicationContext } from '../../framework/types'
 import { createProfileService } from '../profiles'
 import { createTokenService } from '../tokens'
 import { AuthServices } from '../types'
 
+const TEST_PORT = 4444
 
-const createPortPool = () => {
-	let nextPort = 4444
-	const acquire = async () => ++nextPort
-	const release = (port: number) => {} // ports.push(port)
-
-	return { acquire, release }
-}
-
-const portPool = createPortPool()
+// a simple module that prevents errors to go to console.error
+const silentErrorsModule = ({ app }: ApplicationContext) => app.on('error', () => (void 0))
 
 export const notImplemented = () => { throw new Error('not implemented') }
+
 export const createFakeServices = (patch: Partial<AuthServices> = null): AuthServices => ({
 	profiles: createProfileService({
 		claims: {
@@ -35,14 +30,14 @@ export const createFakeServices = (patch: Partial<AuthServices> = null): AuthSer
 })
 
 export const withApplication = async (application: Application, handler: (server: Server) => Promise<void>): Promise<void> => {
-	const port = await portPool.acquire()
-	const server = await application.start(port)
+	const server = await application.start(TEST_PORT)
 	try {
 		await handler(server)
 	} finally {
 		await new Promise((resolve, reject) => server.close(err => err ? reject(err) : resolve(null)))
-		portPool.release(port)
 	}
 }
 
-export const withAuthApplication = async (services: AuthServices, handler: (server: Server) => Promise<void>): Promise<void> => withApplication(createAuthApp(services), handler)
+export const withAuthApplication = async (services: AuthServices, handler: (server: Server) => Promise<void>): Promise<void> => withApplication(
+	createAuthApp({ services, validateResponse: true }).use(silentErrorsModule),
+	handler)
