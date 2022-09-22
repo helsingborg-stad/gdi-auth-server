@@ -40,11 +40,19 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+         with:
+          fetch-depth: 0
+          ref: main
 
       -
         name: Debug git
         run: |
           git show
+          echo ===== PACKAGE =====
+          cat package.json
+          echo ===== API =====
+          cat gdi-auth-openapi.yml
+
 
       - name: Repository Variable to Lowercase
         id: string
