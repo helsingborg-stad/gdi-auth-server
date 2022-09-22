@@ -26,8 +26,8 @@ jobs:
           git config user.name version-updater
           git config user.email version-updater@helsingborg.se
           git add .
-          git commit -m "🔖 Set versions to latest release tag"
-          git push origin main
+          git commit -m "🔖 Set versions to release tag ${{ github.event.release.tag_name }}"
+          git push
 
       - name: Repository Variable to Lowercase
         id: string
