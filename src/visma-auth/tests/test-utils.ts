@@ -2,6 +2,7 @@ import { Server } from 'node:http'
 import { createAuthApp } from '../../auth-app'
 import { Application, ApplicationContext } from '../../framework/types'
 import { createProfileService } from '../profiles'
+import { createNullRefreshTokenRepository } from '../refresh-tokens'
 import { createTokenService } from '../tokens'
 import { AuthServices } from '../types'
 
@@ -21,7 +22,11 @@ export const createFakeServices = (patch: Partial<AuthServices> = null): AuthSer
 			notBefore: '0s',
 			subject: '',
 		} }),
-	tokens: createTokenService({ sharedSecretKey: 'test shared secret key', privateSecretKey: 'test private secret key' }),
+	tokens: createTokenService({
+		sharedSecretKey: 'test shared secret key',
+		privateSecretKey: 'test private secret key',
+		refreshTokens: createNullRefreshTokenRepository(),
+	}),
 	visma: {
 		login: notImplemented,
 		getSession: notImplemented,

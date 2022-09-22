@@ -16,6 +16,7 @@ export interface VismaAuthApiLoginResult {
 
 export interface VismaSession {
     session: any,
+	sessionId: string
     user?: {
         id?: string,
         name?: string
@@ -33,7 +34,7 @@ export interface VismaAuthService {
 
 const makeUrl = (baseUrl: string, path: string) => new URL(path, baseUrl).toString()
 
-const mapNativeSessionToVismaSession = (session: any): VismaSession =>
+const mapNativeSessionToVismaSession = (sessionId: string, session: any): VismaSession =>
 /*
         Session could look something like
         {
@@ -66,25 +67,29 @@ const mapNativeSessionToVismaSession = (session: any): VismaSession =>
     */
 	session?.errorObject?.code // described error in response?
 		? ({
-			session,
+			sessionId,
 			error: {
 				code: session?.errorObject?.code,
 				message: session?.errorObject?.message,
-			} })
+			},
+			session,
+		})
 		: session?.userAttributes?.serialNumber // described person in response?
 			? ({
-				session,
 				user: {
 					id: session?.userAttributes?.serialNumber,
 					name: session?.userAttributes?.CN,
 				},
+				sessionId,
+				session,
 			})
 			: ({
-				session,
 				error: {
 					code: 'UNKNOWN',
 					message: 'Internal validation failed',
 				},
+				sessionId,
+				session,
 			})
 
 
@@ -121,7 +126,7 @@ export const createVismaAuthService = ({ baseUrl, customerKey, serviceKey }: Vis
 		})
 		.set('Accept', 'application/json')
 		.then(({ body }) => body)
-		.then(mapNativeSessionToVismaSession)
+		.then(native => mapNativeSessionToVismaSession(sessionId, native))
 		.then(tap(v => debug({
 			'/json1.1/GetSession': v,
 		}))),

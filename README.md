@@ -1,6 +1,12 @@
 # GDI Auth Server
 
 Authentication using APIs from Visma.
+
+- [x] Authenticate against Visma (BankId, Freja)
+- [x] issue JWT access tokens and refresh tokens
+- [ ] access token reneval
+- [ ] handle refresh token validity
+- [ ] handle refresh token revocation
 # Getting started
 
 ## Create environment

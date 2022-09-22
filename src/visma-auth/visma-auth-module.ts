@@ -17,6 +17,12 @@ export function vismaAuthModule(services: AuthServices): ApplicationModule {
 	const token = async ctx => {
 		const { query: { ts_session_id, profile } } = ctx
 		const session = await visma.getSession({ sessionId: ts_session_id })
+		if (session.error) {
+			return ctx.throw(401)
+		}
+		if (!session?.user?.id) {
+			return ctx.throw(401)
+		}
 		const usedProfile = getBestMatchingProfile(profile)
 		ctx.body = await createVismaSessionTokens(session, usedProfile)
 	}

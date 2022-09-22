@@ -12,11 +12,51 @@ describe('GET /api/v1/auth/token', () => {
 				.set('Accept', 'application/json')
 			expect(response.status).toEqual(400)   
 		}))
+	it('returns 401 when Visma reports error', async () => withAuthApplication(
+		createFakeServices({
+			visma: {
+				login: async () => { throw new Error ('not implemented') },
+				getSession: async ({ sessionId }) => ({
+					sessionId,
+					session: 'some internal stuff',
+					error: {
+						code: '123',
+						message: 'fake error',
+					},
+				}),
+			},
+		}),
+		async server => {
+			const response = await request(server)
+				.get('/api/v1/auth/token?ts_session_id=test-id-123')
+				.set('Accept', 'application/json')
+			expect(response.status).toEqual(401)
+		}))
+	it('returns 401 when no user.id is returned from Visma', async () => withAuthApplication(
+		createFakeServices({
+			visma: {
+				login: async () => { throw new Error ('not implemented') },
+				getSession: async ({ sessionId }) => ({
+					sessionId,
+					session: 'some internal stuff',
+					user: {
+						id: '',
+					},
+				}),
+			},
+		}),
+		async server => {
+			const response = await request(server)
+				.get('/api/v1/auth/token?ts_session_id=test-id-123')
+				.set('Accept', 'application/json')
+			expect(response.status).toEqual(401)
+		}))
 	it('validates creates a signed JWT', async () => withAuthApplication(
 		createFakeServices({
 			visma: {
 				login: async () => { throw new Error ('not implemented') },
-				getSession: async sessionId => ({
+				getSession: async ({ sessionId }) => ({
+					sessionId,
 					session: 'some internal stuff',
 					user: {
 						id: '19710320-1234',

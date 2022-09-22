@@ -2,10 +2,12 @@ import * as jwt from 'jsonwebtoken'
 import { getEnv } from '../util/get-env'
 import { VismaSession } from './visma-api'
 import { SigningProfile } from './profiles'
+import { RefreshTokenRepository } from './refresh-tokens'
 
 export interface TokenServiceConfiguration {
 	sharedSecretKey: string
-	privateSecretKey: string
+	privateSecretKey: string,
+	refreshTokens: RefreshTokenRepository
 }
 
 export interface SessionTokens {
@@ -18,12 +20,13 @@ export interface TokenService {
 }
 
 
-export const getTokenServiceConfigurationFromEnv = (): TokenServiceConfiguration => ({
-	sharedSecretKey: getEnv('JWT_SHARED_SECRET_KEY'),
-	privateSecretKey: getEnv('JWT_PRIVATE_SECRET_KEY'),
+export const getTokenServiceConfigurationFromEnv = (refreshTokens: RefreshTokenRepository): TokenServiceConfiguration => ({
+	sharedSecretKey: getEnv('JWT_SHARED_SECRET'),
+	privateSecretKey: getEnv('JWT_PRIVATE_SECRET'),
+	refreshTokens,
 })
 
-export function createTokenService ({ privateSecretKey, sharedSecretKey }: TokenServiceConfiguration): TokenService {
+export function createTokenService ({ privateSecretKey, sharedSecretKey, refreshTokens }: TokenServiceConfiguration): TokenService {
 	const createAccessToken = (session: VismaSession, profile: SigningProfile) => session?.user
 		? jwt.sign({
 			...session.user,
@@ -46,7 +49,7 @@ export function createTokenService ({ privateSecretKey, sharedSecretKey }: Token
 
 	const createVismaSessionTokens = async (session: VismaSession, profile: SigningProfile): Promise<SessionTokens> => ({
 		accessToken: createAccessToken(session, profile),
-		refreshToken: createRefreshToken(session, profile),
+		refreshToken: await refreshTokens.registerRefreshTokenFor(session.user.id, createRefreshToken(session, profile)),
 	})
 
 	return {
