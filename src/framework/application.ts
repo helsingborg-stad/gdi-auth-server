@@ -73,8 +73,11 @@ export function createApplication({ openApiDefinitionPath, validateResponse }: C
 	})
 	
 	// register response validation if wanted
-	validateResponse && api.register({
-		postResponseHandler: performResponseValidation,
+	api.register({
+		postResponseHandler: async (c, ctx) => {
+			ctx.set('Cache-Control', 'no-store')
+			return validateResponse && performResponseValidation(c, ctx)
+		},
 	})
 
 	return {
