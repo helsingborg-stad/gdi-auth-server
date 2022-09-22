@@ -44,14 +44,6 @@ jobs:
           fetch-depth: 0
           ref: main
 
-      -
-        name: Debug git
-        run: |
-          git show
-          echo ===== PACKAGE =====
-          cat package.json
-
-
       - name: Repository Variable to Lowercase
         id: string
         uses: ASzc/change-string-case-action@v1
