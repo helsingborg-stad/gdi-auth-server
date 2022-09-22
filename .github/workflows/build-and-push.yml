@@ -32,7 +32,7 @@ jobs:
           git config user.email github-actions@github.com
           git add .
           git commit -am "🔖 Set versions to release tag ${{ github.event.release.tag_name }}"
-          git push origin main
+          git push -f origin main
 
   build:
     needs: set-version
