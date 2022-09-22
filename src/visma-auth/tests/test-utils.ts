@@ -21,7 +21,7 @@ export const createFakeServices = (patch: Partial<AuthServices> = null): AuthSer
 			notBefore: '0s',
 			subject: '',
 		} }),
-	tokens: createTokenService({ secretKey: 'test secret key' }),
+	tokens: createTokenService({ sharedSecretKey: 'test shared secret key', privateSecretKey: 'test private secret key' }),
 	visma: {
 		login: notImplemented,
 		getSession: notImplemented,

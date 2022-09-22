@@ -17,8 +17,14 @@ export interface SigningProfileClaims {
 export interface SigningProfile {
     id: string
     description: string
-    maxAge: number
-    claims: SigningProfileClaims
+	accessToken: {
+		maxAge: number
+		claims: SigningProfileClaims
+	}
+	refreshToken: {
+		maxAge: number
+		claims: SigningProfileClaims
+	}
 }
 
 export interface ProfilesConfiguration {
@@ -41,11 +47,17 @@ export function createProfileService ({ claims }: ProfilesConfiguration): Profil
 		...c,
 	})
 
-	const makeProfile = (expiresIn: string, description: string) => ({
+	const makeProfile = (expiresIn: string, description: string): SigningProfile => ({
 		id: expiresIn,
 		description,
-		maxAge: ms(expiresIn),
-		claims: makeClaims({ expiresIn }),
+		accessToken: {
+			maxAge: ms(expiresIn),
+			claims: makeClaims({ expiresIn }),
+		},
+		refreshToken: {
+			maxAge: ms('7 days'),
+			claims: makeClaims({ expiresIn: '7 days' }),
+		},
 	})
 
 	const profiles: SigningProfile[] = [

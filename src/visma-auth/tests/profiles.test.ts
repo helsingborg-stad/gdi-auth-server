@@ -1,4 +1,3 @@
-import { stat } from 'fs'
 import * as request from 'supertest'
 import { SigningProfile } from '../profiles'
 

@@ -10,8 +10,11 @@ touch .env
 echo "VISMA_AUTH_CUSTOMERKEY=..." >> .env
 echo "VISMA_AUTH_SERVICEKEY=..." >> .env
 echo "VISMA_AUTH_BASEURL=..." >> .env
-# Set secret used to sign JWT
-echo "JWT_SECRET_KEY=..." >> .env
+# Set shared secret used to sign JWT
+# This key should be distributed to all federates that wish to verify an issued access token
+echo "JWT_SHARED_SECRET=<tell this to other services that wish to perform authorization" >> .env
+# Set a private signing secret that should never be known outside the running service
+echo "JWT_PRIVATE_SECRET=<set once and NEVER tell>" >> .env
 # Optionally set claims used in tokens
 echo "JWT_SIGN_ISSUER=https://www.example.com" >> .env
 echo "JWT_SIGN_AUDIENCE=https://example.com" >> .env

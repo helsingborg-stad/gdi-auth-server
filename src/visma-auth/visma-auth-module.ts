@@ -4,7 +4,7 @@ import { AuthServices } from './types'
 export function vismaAuthModule(services: AuthServices): ApplicationModule {
 	const {
 		visma, 
-		tokens: { createVismaSessionToken }, 
+		tokens: { createVismaSessionTokens }, 
 		profiles: { getBestMatchingProfile, getProfiles },
 	} = services
 
@@ -18,14 +18,11 @@ export function vismaAuthModule(services: AuthServices): ApplicationModule {
 		const { query: { ts_session_id, profile } } = ctx
 		const session = await visma.getSession({ sessionId: ts_session_id })
 		const usedProfile = getBestMatchingProfile(profile)
-		ctx.body = {
-			jwt: createVismaSessionToken(session, usedProfile),
-			maxAge: usedProfile.maxAge,
-		}
+		ctx.body = await createVismaSessionTokens(session, usedProfile)
 	}
 
 	const profiles = async ctx => {
-		ctx.body = await getProfiles()
+		ctx.body = (await getProfiles()).map(({ id, description }) => ({ id, description }))
 		ctx.status = 200
 	}
 
@@ -36,12 +33,7 @@ export function vismaAuthModule(services: AuthServices): ApplicationModule {
 		const { query: { ts_session_id } } = ctx
 		const session = await visma.getSession({ sessionId: ts_session_id })
 		const profile = getBestMatchingProfile('')
-		ctx.body = {
-			jwt: createVismaSessionToken(session, profile),
-			maxAge: profile.maxAge,
-			profile,
-			session,
-		}
+		ctx.body = await createVismaSessionTokens(session, profile)
 	}
 
 	return ({ registerKoaApi }: ApplicationContext) => registerKoaApi({

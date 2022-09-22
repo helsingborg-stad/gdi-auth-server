@@ -46,6 +46,7 @@ const performResponseValidation = (c: Context, ctx: Koa.Context) => {
 		.filter(errors => errors && errors.length)
 		.map(errors => {
 			debug({
+				body: ctx.body,
 				operation: c.operation,
 				errors,
 			})

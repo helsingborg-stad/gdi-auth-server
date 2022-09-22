@@ -100,30 +100,16 @@ components:
           type: string
         description:
           type: string
-        maxAge:
-          type: integer
-        claims:
-          type: object
-          properties:
-            issuer:
-              type: string
-            audience:
-              type: string
-            subject:
-              type: string
-            expiresIn:
-              type: string
-            notBefore:
-              type: string
     SignResponse:
       type: object
       required:
-        - jwt
+        - accessToken
+        - refreshToken
       properties:
-        jwt:
+        accessToken:
           type: string
-        maxAge:
-          type: integer
+        refreshToken:
+          type: string
     JwtClaims:
       type: object
       properties:

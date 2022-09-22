@@ -17,7 +17,7 @@ export interface VismaAuthApiLoginResult {
 export interface VismaSession {
     session: any,
     user?: {
-        ssn?: string,
+        id?: string,
         name?: string
     },
     error?: {
@@ -75,7 +75,7 @@ const mapNativeSessionToVismaSession = (session: any): VismaSession =>
 			? ({
 				session,
 				user: {
-					ssn: session?.userAttributes?.serialNumber,
+					id: session?.userAttributes?.serialNumber,
 					name: session?.userAttributes?.CN,
 				},
 			})
