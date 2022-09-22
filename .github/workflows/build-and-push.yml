@@ -41,10 +41,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
+          fetch-depth: 0
           ref: main
         # This is a workaround needed in order to fetch the latest main
         # i.e. with the new versions
-      - run: git pull --no-rebase
+        run: git pull origin main --no-rebase
 
       - name: Repository Variable to Lowercase
         id: string
