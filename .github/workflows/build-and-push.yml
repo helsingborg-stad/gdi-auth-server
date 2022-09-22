@@ -6,11 +6,10 @@ on:
 
 
 jobs:
-  set-version:
+  build:
     runs-on: ubuntu-latest
     steps:
-      -
-        name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
@@ -27,26 +26,13 @@ jobs:
         run: npm version --no-git-tag-version ${{ github.event.release.tag_name }}
       
       - 
+        name: Commit and push new versions
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add .
           git commit -am "🔖 Set versions to release tag ${{ github.event.release.tag_name }}"
           git push -f origin main
-
-  build:
-    needs: set-version
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-          ref: main
-        
-        # This is a workaround needed in order to fetch the latest main
-        # i.e. with the new versions
-      - run: git pull origin main --no-rebase
 
       - name: Repository Variable to Lowercase
         id: string
