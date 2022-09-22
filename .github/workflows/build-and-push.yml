@@ -51,7 +51,6 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-
       - name: Trigger config repo update
         uses: convictional/trigger-workflow-and-wait@v1.3.0
         with:
@@ -59,6 +58,6 @@ jobs:
           repo: ${{ secrets.GDI_GITOPS_CONFIG_REPO }}
           github_token: ${{ secrets.GDI_GITOPS_TOKEN }}
           workflow_file_name: update-config.yml
-          inputs: '{"sha": "${{ github.sha }}", "app": "${{ secrets.GDI_GITOPS_APP }}"}'
+          inputs: '{"semver": "${{ github.event.release.tag_name }}", "app": "${{ secrets.GDI_GITOPS_APP }}"}'
           wait_workflow: false
           ref: main
