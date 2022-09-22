@@ -11,7 +11,7 @@ jobs:
     steps:
       -
         name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       -
         name: Set openapi version
         uses: rmeneely/update-yaml@v1
@@ -25,12 +25,13 @@ jobs:
       
       - 
         name: Update repository
+        uses: actions/checkout@v3
         run: |
           git config user.name version-updater
           git config user.email version-updater@helsingborg.se
           git add .
           git commit -m "🔖 Set versions to release tag ${{ github.event.release.tag_name }}"
-          git push -u origin main
+          git push
 
   build:
     needs: set-version
