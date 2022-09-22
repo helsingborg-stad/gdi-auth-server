@@ -51,10 +51,6 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Set short hash variable
-        id: vars
-        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
-
       - name: Trigger config repo update
         uses: convictional/trigger-workflow-and-wait@v1.3.0
         with:
