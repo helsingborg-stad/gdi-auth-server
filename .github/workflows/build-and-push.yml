@@ -50,8 +50,6 @@ jobs:
           git show
           echo ===== PACKAGE =====
           cat package.json
-          echo ===== API =====
-          cat gdi-auth-openapi.yml
 
 
       - name: Repository Variable to Lowercase
