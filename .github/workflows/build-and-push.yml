@@ -19,10 +19,14 @@ jobs:
         openapi-spec-file: gdi-auth.openapi.yml
         release-tag-name: ${{github.event.release.tag_name}}
 
-        GDI_GITOPS_CONFIG_REPO: ${{ secrets.GDI_GITOPS_CONFIG_REPO }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GDI_GITOPS_TOKEN: ${{ secrets.GDI_GITOPS_TOKEN }}
-        GDI_GITOPS_APP: ${{ secrets.GDI_GITOPS_APP }}
+        gdi-gitops-config-repo: ${{ secrets.GDI_GITOPS_CONFIG_REPO }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+       
+        gdi-gitops-token: ${{ secrets.GDI_GITOPS_TOKEN }}
+        gdi-gitops-app: ${{ secrets.GDI_GITOPS_APP }}
+
+        docker-username: ${{ github.repository_owner }}
+        docker-password:  ${{ secrets.GITHUB_TOKEN }}
   # set-version:
   #   runs-on: ubuntu-latest
   #   steps:
