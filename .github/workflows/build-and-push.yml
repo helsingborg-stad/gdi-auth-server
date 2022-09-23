@@ -18,6 +18,7 @@ jobs:
         update-package-version: true
         openapi-spec-file: gdi-auth.openapi.yml
         release-tag-name: ${{github.event.release.tag_name}}
+      secrets: inherit
   # set-version:
   #   runs-on: ubuntu-latest
   #   steps:
