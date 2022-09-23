@@ -18,6 +18,11 @@ jobs:
         update-package-version: true
         openapi-spec-file: gdi-auth.openapi.yml
         release-tag-name: ${{github.event.release.tag_name}}
+
+        GDI_GITOPS_CONFIG_REPO: ${{ secrets.GDI_GITOPS_CONFIG_REPO }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GDI_GITOPS_TOKEN: ${{ secrets.GDI_GITOPS_TOKEN }}
+        GDI_GITOPS_APP: ${{ secrets.GDI_GITOPS_APP }}
   # set-version:
   #   runs-on: ubuntu-latest
   #   steps:
