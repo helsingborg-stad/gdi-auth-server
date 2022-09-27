@@ -45,6 +45,9 @@
       <a href="#about-the-project">About The Project</a>
     </li>
     <li>
+      <a href="#authentication-flow">Authentication flow</a>
+    </li>
+    <li>
       <a href="#getting-started">Getting Started</a>
       <ul>
         <li><a href="#prerequisites">Prerequisites</a></li>
@@ -69,6 +72,28 @@ Authentication using Visma Federation Services (BankId, Freya).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+## Authentication flow
+A website that want's to autenticate an interactive user should provide
+- a login page with a (web) link to __/api/v1/auth/login__ providing
+- a landing page that will collect access and refresh tokens from __/api/v1/auth/token__
+
+
+```mermaid
+sequenceDiagram
+  participant Login page
+	participant Landing page
+  participant GDI Auth Server
+	participant Visma Federation Services
+	participant User
+    Login page->>GDI Auth Server: GET /api/v1/login?redirect_url=<landing page>&relay_state=...
+	GDI Auth Server->>Visma Federation Services: Redirects to
+	Visma Federation Services->>User: Collects credentials and authenticates
+	Visma Federation Services->>Landing page: redirects to <landing page>?ts_sessionid_=...&relay_state=...
+	Landing page->>GDI Auth Server: GET /api/v1/auth/token?ts_session_id=...
+	Landing page->>Landing page: Landing page now has {accessToken, refreshToken}
+```
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- GETTING STARTED -->
 ## Getting Started
