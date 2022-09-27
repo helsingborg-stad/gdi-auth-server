@@ -1,4 +1,3 @@
-import { Server } from 'node:http'
 import { createAuthApp } from '../../auth-app'
 import { Application, ApplicationContext } from '../../framework/types'
 import { createProfileService } from '../profiles'
@@ -6,14 +5,12 @@ import { createNullRefreshTokenRepository } from '../refresh-tokens'
 import { createTokenService } from '../tokens'
 import { AuthServices } from '../types'
 
-const TEST_PORT = 4444
-
 // a simple module that prevents errors to go to console.error
 const silentErrorsModule = ({ app }: ApplicationContext) => app.on('error', () => (void 0))
 
-export const notImplemented = () => { throw new Error('not implemented') }
+export const notImplemented = (): any => { throw new Error('not implemented') }
 
-export const createFakeServices = (patch: Partial<AuthServices> = null): AuthServices => ({
+export const createFakeServices = (patch: Partial<AuthServices> | null = null): AuthServices => ({
 	profiles: createProfileService({
 		claims: {
 			issuer: 'test issuer',
@@ -34,15 +31,4 @@ export const createFakeServices = (patch: Partial<AuthServices> = null): AuthSer
 	...patch,
 })
 
-export const withApplication = async (application: Application, handler: (server: Server) => Promise<void>): Promise<void> => {
-	const server = await application.start(TEST_PORT)
-	try {
-		await handler(server)
-	} finally {
-		await new Promise((resolve, reject) => server.close(err => err ? reject(err) : resolve(null)))
-	}
-}
-
-export const withAuthApplication = async (services: AuthServices, handler: (server: Server) => Promise<void>): Promise<void> => withApplication(
-	createAuthApp({ services, validateResponse: true }).use(silentErrorsModule),
-	handler)
+export const createTestApp = (services: AuthServices): Application => createAuthApp({ services, validateResponse: true }).use(silentErrorsModule)

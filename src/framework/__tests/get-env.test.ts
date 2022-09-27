@@ -1,4 +1,4 @@
-import { getEnv } from './get-env'
+import { getEnv } from '../get-env'
 
 describe('get-env', () => {
 	it('defaults to trimmed process.ENV', () => {

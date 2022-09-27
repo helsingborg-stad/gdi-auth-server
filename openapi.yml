@@ -7,6 +7,30 @@ tags:
   - name: Web authentication
     description: Authentication operations
 paths:
+  /api/v1/{namespace}/healthcheck:
+    get:
+      operationId: healthCheck
+      summary: "Healthcheck of service"
+      tags:
+        - Status of Operations
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Service is healthy"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type:
+                      string
+
   /api/v1/auth/login:
     get:
       operationId: login

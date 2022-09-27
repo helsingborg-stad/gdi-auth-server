@@ -17,6 +17,7 @@ const tryValidate = (key: string, value: string, validate: (v: string) => boolea
 	}
 }
 
+/** get named evironment variable with options for trimming, validation and default value */
 const getEnv = (key: string, { trim, validate, fallback }: GetEnvArgs = { trim: true }): string => [ process.env[key], fallback ]
 	.filter(v => typeof v === 'string')
 	.map(v => trim? v.trim(): v)
