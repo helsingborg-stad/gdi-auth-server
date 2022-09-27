@@ -1,8 +1,8 @@
 import * as jwt from 'jsonwebtoken'
-import { getEnv } from '../util/get-env'
 import { VismaSession } from './visma-api'
 import { SigningProfile } from './profiles'
 import { RefreshTokenRepository } from './refresh-tokens'
+import { getEnv } from '../framework/get-env'
 
 export interface TokenServiceConfiguration {
 	sharedSecretKey: string

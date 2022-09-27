@@ -3,6 +3,11 @@ FROM node:18 as builder
 
 WORKDIR /usr/src/app
 
+COPY yarn.lock tsconf# Builder image
+FROM node:18 as builder
+
+WORKDIR /usr/src/app
+
 COPY yarn.lock tsconfig.json package*.json *.yml ./
 COPY src ./src
 
@@ -30,6 +35,6 @@ ENV PORT=80
 COPY --from=deps /deps/node_modules /usr/src/app/node_modules/
 COPY --from=deps /deps/package.json /usr/src/package.json
 COPY --from=builder /usr/src/app/dist ./dist
-COPY --from=builder /usr/src/app/gdi-auth.openapi.yml /usr/src/app/gdi-auth.openapi.yml
+COPY --from=builder /usr/src/app/openapi.yml /usr/src/app/openapi.yml
 
 CMD ["dist/index.js"]

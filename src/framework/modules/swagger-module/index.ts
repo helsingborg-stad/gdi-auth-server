@@ -1,7 +1,8 @@
 import { koaSwagger } from 'koa2-swagger-ui'
-import { ApplicationContext } from '../types'
+import { ApplicationContext, ApplicationModule } from '../../types'
 
-const swaggerModule = ({ app, router, api }: ApplicationContext) => {
+/** Module that exposes __/swagger__ and __/swagger.json__ with contents derived from current openapi specification  */
+const swaggerModule = (): ApplicationModule => ({ app, router, api }: ApplicationContext) => {
 	app.use(koaSwagger({
 		routePrefix: '/swagger',
 		swaggerOptions: {
