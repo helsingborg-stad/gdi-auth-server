@@ -1,8 +1,8 @@
-name: Build and push docker image to github registry and deploy on prod environment.
+name: Build and push docker image to github registry and deploy on dev environment.
 
 on:
   release:
-    types: [released]
+    types: [prereleased]
 
 
 jobs:
@@ -24,7 +24,7 @@ jobs:
        
         gdi-gitops-token: ${{ secrets.GDI_GITOPS_TOKEN }}
         gdi-gitops-app: ${{ secrets.GDI_GITOPS_APP }}
-        gdi-gitops-env: prod
+        gdi-gitops-env: dev
 
         docker-username: ${{ github.repository_owner }}
         docker-password:  ${{ secrets.GITHUB_TOKEN }}
