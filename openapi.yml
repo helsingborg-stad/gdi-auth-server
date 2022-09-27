@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: GDI Authentication API
   description: Common broker for GDI authentication against Visma Federation Services (BankId, Freya).
-  version: 1.0.23
+  version: 1.0.2
 tags:
   - name: Web authentication
     description: Authentication operations
