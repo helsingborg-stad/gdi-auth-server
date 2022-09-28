@@ -1,9 +1,3 @@
-# Builder image
-FROM node:18 as builder
-
-WORKDIR /usr/src/app
-
-COPY yarn.lock tsconf# Builder image
 FROM node:18 as builder
 
 WORKDIR /usr/src/app
