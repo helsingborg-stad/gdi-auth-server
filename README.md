@@ -51,7 +51,7 @@
       <a href="#getting-started">Getting Started</a>
       <ul>
         <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="configure-environment-variables">Configure environment variables</a></li>
+        <li><a href="#configure-environment-variables">Configure environment variables</a></li>
         <li><a href="#run-locally">Run locally</a></li>
         <li><a href="#end-to-end-testing">End to end testing</a></li>
       </ul>
