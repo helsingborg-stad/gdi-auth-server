@@ -48,8 +48,8 @@ export function createTokenService ({ privateSecretKey, sharedSecretKey, refresh
 		: '' 
 
 	const createVismaSessionTokens = async (session: VismaSession, profile: SigningProfile): Promise<SessionTokens> => ({
-		accessToken: createAccessToken(session, profile),
-		refreshToken: await refreshTokens.registerRefreshTokenFor(session.user.id, createRefreshToken(session, profile)),
+		accessToken: session && profile ? createAccessToken(session, profile) : '',
+		refreshToken: session?.user?.id && profile ? await refreshTokens.registerRefreshTokenFor(session.user.id, createRefreshToken(session, profile)) : '',
 	})
 
 	return {

@@ -1,3 +1,4 @@
+import { StatusCodes } from 'http-status-codes'
 import { ApplicationContext, ApplicationModule } from '../framework/types'
 import { AuthServices } from './types'
 
@@ -10,14 +11,15 @@ export function vismaAuthModule(services: AuthServices): ApplicationModule {
 
 	const login = async ctx => {
 		const { query: { redirect_url: callbackUrl, relay_state: relayState } } = ctx
-		const loginResult = await visma.login({ callbackUrl, relayState })
-		ctx.redirect(loginResult.redirectUrl)
+		const { redirectUrl } = (await visma.login({ callbackUrl, relayState })) || {}
+		
+		return redirectUrl ? ctx.redirect(redirectUrl) : ctx.throw(StatusCodes.BAD_GATEWAY)
 	}
 
 	const token = async ctx => {
 		const { query: { ts_session_id, profile } } = ctx
 		const session = await visma.getSession({ sessionId: ts_session_id })
-		if (session.error) {
+		if (session?.error) {
 			return ctx.throw(401)
 		}
 		if (!session?.user?.id) {
