@@ -15,11 +15,13 @@ export interface VismaAuthApiLoginResult {
 }
 
 export interface VismaSession {
-    session: any,
+    session: any
 	sessionId: string
     user?: {
-        id?: string,
+        id?: string
         name?: string
+		firstName?: string,
+		lastName?: string
     },
     error?: {
         code: string,
@@ -79,6 +81,8 @@ const mapNativeSessionToVismaSession = (sessionId: string, session: any): VismaS
 				user: {
 					id: session?.userAttributes?.serialNumber,
 					name: session?.userAttributes?.CN,
+					firstName: session?.userAttributes?.GN, 
+					lastName: session?.userAttributes?.SN, 
 				},
 				sessionId,
 				session,
