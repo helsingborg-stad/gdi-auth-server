@@ -5,7 +5,7 @@ import { AuthServices } from './types'
 export function vismaAuthModule(services: AuthServices): ApplicationModule {
 	const {
 		visma, 
-		tokens: { createVismaSessionTokens }, 
+		tokens: { createVismaSessionTokens, verifyToken }, 
 		profiles: { getBestMatchingProfile, getProfiles },
 	} = services
 
@@ -14,6 +14,18 @@ export function vismaAuthModule(services: AuthServices): ApplicationModule {
 		const { redirectUrl } = (await visma.login({ callbackUrl, relayState })) || {}
 		
 		return redirectUrl ? ctx.redirect(redirectUrl) : ctx.throw(StatusCodes.BAD_GATEWAY)
+	}
+
+	const logout = async ctx => {
+		const { query: { token } } = ctx
+		try {
+			const payload = await verifyToken(token)
+			payload && await visma.logout(payload)
+			ctx.body = {}
+		} catch {
+			ctx.body = {}
+			ctx.throw(StatusCodes.BAD_REQUEST)
+		}
 	}
 
 	const token = async ctx => {
@@ -46,6 +58,7 @@ export function vismaAuthModule(services: AuthServices): ApplicationModule {
 
 	return ({ registerKoaApi }: ApplicationContext) => registerKoaApi({
 		login,
+		logout,
 		token,
 		profiles,
 		testLandingPage,

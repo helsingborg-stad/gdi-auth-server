@@ -26,6 +26,7 @@ export const createFakeServices = (patch: Partial<AuthServices> | null = null): 
 	}),
 	visma: {
 		login: notImplemented,
+		logout: notImplemented,
 		getSession: notImplemented,
 	},
 	...patch,

@@ -14,15 +14,16 @@ export interface VismaAuthApiLoginResult {
     sessionId: string
 }
 
+export interface VismaSessionUser {
+	id?: string
+	name?: string
+	firstName?: string,
+	lastName?: string
+}
 export interface VismaSession {
     session: any
 	sessionId: string
-    user?: {
-        id?: string
-        name?: string
-		firstName?: string,
-		lastName?: string
-    },
+    user?: VismaSessionUser,
     error?: {
         code: string,
         message: string
@@ -31,7 +32,8 @@ export interface VismaSession {
 
 export interface VismaAuthService {
     login: ({ callbackUrl, relayState }: {callbackUrl: string, relayState?: string}) => Promise<VismaAuthApiLoginResult>,
-    getSession: ({ sessionId }: {sessionId: string}) => Promise<VismaSession>
+    getSession: ({ sessionId }: {sessionId: string}) => Promise<VismaSession>,
+	logout: ({ sessionId }: {sessionId: string }) => Promise<void>
 }
 
 const makeUrl = (baseUrl: string, path: string) => new URL(path, baseUrl).toString()
@@ -118,9 +120,18 @@ export const createVismaAuthService = ({ baseUrl, customerKey, serviceKey }: Vis
 		.then(({ body }) => body as VismaAuthApiLoginResult)
 		.then(tap(result => debug({
 			'/json1.1/Login': result,
-		})))
-	,
-
+		}))),
+	logout: ({ sessionId }) => request
+		.post(makeUrl(baseUrl, '/json1.1/Logout'))
+		.query({
+			customerKey: customerKey,
+			serviceKey: serviceKey,
+			sessionId,
+		})
+		.then(({ body: bodyForDebugging }) => bodyForDebugging)
+		.then(tap(result => debug({
+			'/json1.1/Logout': result,
+		}))),
 	getSession: ({ sessionId }) => request
 		.get(makeUrl(baseUrl, '/json1.1/GetSession'))
 		.query({

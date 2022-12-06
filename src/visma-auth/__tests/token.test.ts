@@ -3,6 +3,7 @@ import { createFakeServices, createTestApp } from './test-utils'
 import * as jwt from 'jsonwebtoken'
 import { StatusCodes } from 'http-status-codes'
 
+const notImplemented = () => { throw new Error('not implemented') }
 
 describe('GET /api/v1/auth/token', () => {
 	it('return 400 bad request on parameter validation failure', async () => createTestApp(createFakeServices())
@@ -15,7 +16,8 @@ describe('GET /api/v1/auth/token', () => {
 	it('returns 401 unauthorized when Visma reports error', async () => createTestApp(
 		createFakeServices({
 			visma: {
-				login: async () => { throw new Error ('not implemented') },
+				login: notImplemented,
+				logout: notImplemented,
 				getSession: async ({ sessionId }) => ({
 					sessionId,
 					session: 'some internal stuff',
@@ -34,7 +36,8 @@ describe('GET /api/v1/auth/token', () => {
 		}))
 	it('returns 401 unauthorized when no user.id is returned from Visma', async () => createTestApp(createFakeServices({
 		visma: {
-			login: async () => { throw new Error ('not implemented') },
+			login: notImplemented,
+			logout: notImplemented,
 			getSession: async ({ sessionId }) => ({
 				sessionId,
 				session: 'some internal stuff',
@@ -51,7 +54,8 @@ describe('GET /api/v1/auth/token', () => {
 		}))
 	it('validates creates a signed JWT', async () => createTestApp(createFakeServices({
 		visma: {
-			login: async () => { throw new Error ('not implemented') },
+			login: notImplemented,
+			logout: notImplemented,
 			getSession: async ({ sessionId }) => ({
 				sessionId,
 				session: 'some internal stuff',
@@ -73,6 +77,7 @@ describe('GET /api/v1/auth/token', () => {
 			expect(verified).toMatchObject({
 				id: '19710320-1234',
 				name: 'Anders Andersson',
+				sessionId: 'test-id-123',
 				aud: 'test audience',
 				iss: 'test issuer',
 				sub: 'id://19710320-1234',

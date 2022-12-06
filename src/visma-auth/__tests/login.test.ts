@@ -17,6 +17,7 @@ describe('GET /api/v1/auth/login', () => {
 	it('redirects (302 moved temporarily) to whatever Visma says', () => createTestApp(
 		createFakeServices({
 			visma: {
+				logout: notImplemented,
 				getSession: notImplemented,
 				login: async () => ({
 					redirectUrl: fakeReturn,
