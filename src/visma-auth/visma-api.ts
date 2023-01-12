@@ -1,6 +1,7 @@
 import * as request from 'superagent'
 import * as Debug from 'debug'
 import { getEnv } from '../framework/get-env'
+import * as Koa from 'koa'
 const debug = Debug('visma-api')
 
 export interface VismaAuthConfiguration {
@@ -31,7 +32,7 @@ export interface VismaSession {
 }
 
 export interface VismaAuthService {
-    login: ({ callbackUrl, relayState }: {callbackUrl: string, relayState?: string}) => Promise<VismaAuthApiLoginResult>,
+    login: ({ ctx, callbackUrl, relayState }: {ctx: Koa.Context, callbackUrl: string, relayState?: string}) => Promise<VismaAuthApiLoginResult>,
     getSession: ({ sessionId }: {sessionId: string}) => Promise<VismaSession>,
 	logout: ({ sessionId }: {sessionId: string }) => Promise<void>
 }

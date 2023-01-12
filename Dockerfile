@@ -4,6 +4,7 @@ WORKDIR /usr/src/app
 
 COPY yarn.lock tsconfig.json package*.json *.yml ./
 COPY src ./src
+COPY resources ./resources
 
 RUN yarn install && yarn build
 
@@ -30,5 +31,6 @@ COPY --from=deps /deps/node_modules /usr/src/app/node_modules/
 COPY --from=deps /deps/package.json /usr/src/package.json
 COPY --from=builder /usr/src/app/dist ./dist
 COPY --from=builder /usr/src/app/openapi.yml /usr/src/app/openapi.yml
+COPY --from=builder /usr/src/app/resources ./resources
 
 CMD ["dist/index.js"]
