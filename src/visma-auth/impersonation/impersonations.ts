@@ -1,3 +1,5 @@
+import { getEnv } from '../../framework/get-env'
+
 export interface Impersonation {
 	id: string
 	name: string
@@ -20,11 +22,17 @@ export const createImpersonationService = (impersonations: Impersonation[]): Imp
 	getImpersonations: () => impersonations,
 })
 
-export const createImpersonationServiceFromEnv = (): ImpersonationService => createImpersonationService([
-	makeImpersonation('193504049135', 'Filip', 'Walldén'),
-	makeImpersonation('197503259280', 'Nina', 'Greger'),
-])
+export const parseImpersonationsFromEnv = (value: string): Impersonation[] => (value || '')
+	.split(',')
+	.map(v => v.trim())
+	.map(v => v.split(/\s+/))
+	.filter(([ id, firstName, lastName ]) => id && firstName && lastName)
+	.map(([ id, firstName, lastName ]) => makeImpersonation(id, firstName, lastName))
+
+export const createImpersonationServiceFromEnv = (): ImpersonationService => createImpersonationService(
+	parseImpersonationsFromEnv(getEnv('IMPERSONATION_PERSONS', { trim: true, fallback: '' }))
+)
 
 const impersonationPrefix = 'impersonated--'
 export const tryGetImpersonatedIdFromSession = (sessionId: string): string => (sessionId || '').startsWith(impersonationPrefix) ? sessionId.substring(impersonationPrefix.length) : ''
-export const makeImpersonatedSessionId = ({ id }: Impersonation): string => `${impersonationPrefix}${id}`
+export const makeImpersonatedSessionId = ({ id }: {id: string}): string => `${impersonationPrefix}${id}`

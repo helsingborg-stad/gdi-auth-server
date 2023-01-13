@@ -12,6 +12,7 @@ export const createAuthApp = ({ services, validateResponse }: {services: AuthSer
 		openApiDefinitionPath: './openapi.yml',
 		validateResponse,
 	})
+		.use(({ app }) => { app.proxy = true })
 		.use(webFrameworkModule())
 		.use(swaggerModule())
 		.use(healthCheckModule())

@@ -4,11 +4,10 @@ import * as pug from 'pug'
 import { join } from 'path'
 import { Impersonation, makeImpersonatedSessionId } from './impersonations'
 
-export const impersonationModule = ({ impersonations }: AuthServices): ApplicationModule => ({ router }: ApplicationContext) => {
+export const impersonationModule = ({ impersonations }: AuthServices): ApplicationModule => ({ app, router }: ApplicationContext) => {
 	if (!impersonations.canImpersonate()) {
 		return
 	}
-
 	router.get('/impersonated-login', ctx => {
 		const { query: { relayState, redirectUrl, sessionId, callbackUrl } } = ctx
 
