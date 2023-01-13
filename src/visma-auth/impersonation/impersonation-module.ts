@@ -9,26 +9,26 @@ export const impersonationModule = ({ impersonations }: AuthServices): Applicati
 		return
 	}
 	router.get('/impersonated-login', ctx => {
-		const { query: { relayState, redirectUrl, sessionId, callbackUrl } } = ctx
+		const { query: { relay_state, visma_url, ts_session_id, callback_url } } = ctx
 
 		const appendQuery = (url: string, query: Record<string, string>) => Object.entries(query).reduce((u, [ key, value ]) => {
 			u.searchParams.append(key, value)
 			return u	
-		}, new URL(callbackUrl)).toString()
+		}, new URL(callback_url)).toString()
 		
-		const extendImpersonationWithLoginUrl = (impersonation: Impersonation): Impersonation & {loginUrl: string} => ({
+		const extendImpersonationWithLoginUrl = (impersonation: Impersonation): Impersonation & {login_url: string} => ({
 			...impersonation,
-			loginUrl: appendQuery(callbackUrl, {
+			login_url: appendQuery(callback_url, {
 				ts_session_id: makeImpersonatedSessionId(impersonation),
-				relayState,
+				relayState: relay_state,
 			}),
 		})
 		ctx.type = 'text/html'
 		ctx.body = pug.renderFile(join(process.cwd(), './resources/impersonated-login.pug'), {
 			impersonations: impersonations.getImpersonations().map(extendImpersonationWithLoginUrl),
-			redirectUrl,
-			sessionId,
-			relayState,
+			visma_url,
+			ts_session_id,
+			relay_state,
 		})
 	})
 }

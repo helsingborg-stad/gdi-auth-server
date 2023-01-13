@@ -11,10 +11,10 @@ export const createImpersonatingVismaService = (visma: VismaAuthService, imperso
 		login: async ({ ctx, callbackUrl, relayState }) => {
 			const { redirectUrl, sessionId } = await visma.login({ ctx, callbackUrl, relayState })
 			const r = new URL('/impersonated-login', ctx.href)
-			r.searchParams.append('redirectUrl', redirectUrl || '')
-			r.searchParams.append('relayState', relayState || '')
-			r.searchParams.append('sessionId', sessionId || '')
-			r.searchParams.append('callbackUrl', callbackUrl || '')
+			r.searchParams.append('visma_url', redirectUrl || '')
+			r.searchParams.append('relay_state', relayState || '')
+			r.searchParams.append('ts_session_id', sessionId || '')
+			r.searchParams.append('callback_url', callbackUrl || '')
 			return {
 				redirectUrl: r.toString(),
 				sessionId,

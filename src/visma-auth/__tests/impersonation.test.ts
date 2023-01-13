@@ -60,12 +60,11 @@ describe('GET /api/v1/auth/login should redirect to /impersonated-login when imp
 				const location = new URL(headers['location'])
 				expect(location.protocol).toBe('https:')
 				expect(location.host).toBe('my.domain.test')
-
 				// For some reason, forwared port is not considered by node/koa
 				// expect(location.port).toBe(8443)
 				expect(location.pathname).toBe('/impersonated-login')
-				expect(location.searchParams.get('redirectUrl')).toBe('https://whatever.visma.says')
-				expect(location.searchParams.get('callbackUrl')).toBe('test-redirect.com')
-				expect(location.searchParams.get('relayState')).toBe('test-relay-state')
+				expect(location.searchParams.get('visma_url')).toBe('https://whatever.visma.says')
+				expect(location.searchParams.get('callback_url')).toBe('test-redirect.com')
+				expect(location.searchParams.get('relay_state')).toBe('test-relay-state')
 			}))
 })

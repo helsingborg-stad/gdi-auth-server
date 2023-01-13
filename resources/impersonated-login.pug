@@ -21,7 +21,7 @@ html
         div.card-body
           h5.card-title Federerad inloggning
           p.card-text Logga in mot Vismas federerade tjänster
-          a.btn.btn-primary(href=redirectUrl) Logga in
+          a.btn.btn-primary(href=visma_url) Logga in
       div.card.mt-1
         div.card-body
           h5.card-title Testinloggning
@@ -31,6 +31,6 @@ html
             ul.dropdown-menu
               each impersonation in impersonations
                 li
-                  a.dropdown-item(href=(impersonation.loginUrl))
+                  a.dropdown-item(href=(impersonation.login_url))
                     h6.mb-0 #{impersonation.name}
                     p.mb-0.opacity-75 #{impersonation.id}
