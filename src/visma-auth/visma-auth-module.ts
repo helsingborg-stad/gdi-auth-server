@@ -11,7 +11,7 @@ export function vismaAuthModule(services: AuthServices): ApplicationModule {
 
 	const login = async ctx => {
 		const { query: { redirect_url: callbackUrl, relay_state: relayState } } = ctx
-		const { redirectUrl } = (await visma.login({ callbackUrl, relayState })) || {}
+		const { redirectUrl } = (await visma.login({ ctx, callbackUrl, relayState })) || {}
 		
 		return redirectUrl ? ctx.redirect(redirectUrl) : ctx.throw(StatusCodes.BAD_GATEWAY)
 	}

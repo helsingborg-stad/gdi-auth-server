@@ -1,5 +1,6 @@
 import { createAuthApp } from '../../auth-app'
 import { Application, ApplicationContext } from '../../framework/types'
+import { createImpersonationService } from '../impersonation/impersonations'
 import { createProfileService } from '../profiles'
 import { createNullRefreshTokenRepository } from '../refresh-tokens'
 import { createTokenService } from '../tokens'
@@ -11,6 +12,7 @@ const silentErrorsModule = ({ app }: ApplicationContext) => app.on('error', () =
 export const notImplemented = (): any => { throw new Error('not implemented') }
 
 export const createFakeServices = (patch: Partial<AuthServices> | null = null): AuthServices => ({
+	impersonations: createImpersonationService([]),
 	profiles: createProfileService({
 		claims: {
 			issuer: 'test issuer',

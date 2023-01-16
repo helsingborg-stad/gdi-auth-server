@@ -132,7 +132,9 @@ DEBUG=* yarn start
 
 ### End to end testing
 
-Navigate to http://localhost:3000/api/v1/auth/login?redirect_url=http://localhost:3000/api/v1/auth/test-landing-page. It should take you through the authenticationprocess and in the end present issued __access__ and __refreh__ tokens.
+Navigate to 
+http://localhost:3000/api/v1/auth/login?redirect_url=http://localhost:3000/api/v1/auth/test-landing-page. 
+It should take you through the authenticationprocess and in the end present issued __access__ and __refreh__ tokens.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
