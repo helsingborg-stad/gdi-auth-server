@@ -6,9 +6,9 @@ import { StatusCodes } from 'http-status-codes'
 
 describe('parseImpersonationsFromEnv', () => {
 	it('should parse test persons from env corectly', () => {
-		const parsed = parseImpersonationsFromEnv('id firstName lastName, 123 Joe Cool, 456 Fanny Mae,   111 Ignored_missing_lastName, toomuchinfo fn ln extra')
+		const parsed = parseImpersonationsFromEnv('id firstName lastName, 123 Joe Cool, 456 Fanny Mae,   111 Ignored_missing_lastName, toomuchinfo fn mn ln')
 		expect(parsed.map(({ id }) => id)).toMatchObject([ 'id', '123', '456', 'toomuchinfo' ])
-		expect(parsed.map(({ firstName }) => firstName)).toMatchObject([ 'firstName', 'Joe', 'Fanny', 'fn' ])
+		expect(parsed.map(({ firstName }) => firstName)).toMatchObject([ 'firstName', 'Joe', 'Fanny', 'fn mn' ])
 		expect(parsed.map(({ lastName }) => lastName)).toMatchObject([ 'lastName', 'Cool', 'Mae', 'ln' ])
 	})
 })

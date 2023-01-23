@@ -7,7 +7,6 @@ export interface Impersonation {
 	lastName: string
 }
 
-
 export interface ImpersonationService {
 	canImpersonate: () => boolean
 	getImpersonations: () => Impersonation[]
@@ -26,8 +25,11 @@ export const parseImpersonationsFromEnv = (value: string): Impersonation[] => (v
 	.split(',')
 	.map(v => v.trim())
 	.map(v => v.split(/\s+/))
-	.filter(([ id, firstName, lastName ]) => id && firstName && lastName)
-	.map(([ id, firstName, lastName ]) => makeImpersonation(id, firstName, lastName))
+	.map(([ id, ...names ]) => makeImpersonation(
+		id,
+		names.slice(0 ,-1).join(' '),
+		names[names.length-1]))
+	.filter(({ id, firstName, lastName }) => id && firstName && lastName)
 
 export const createImpersonationServiceFromEnv = (): ImpersonationService => createImpersonationService(
 	parseImpersonationsFromEnv(getEnv('IMPERSONATION_PERSONS', { trim: true, fallback: '' }))
