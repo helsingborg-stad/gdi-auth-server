@@ -1,5 +1,7 @@
 FROM node:18 as builder
 
+ARG GITHUB_ACCESS_TOKEN
+
 WORKDIR /usr/src/app
 
 COPY yarn.lock tsconfig.json package*.json *.yml ./
@@ -11,6 +13,8 @@ RUN yarn install && yarn build
 # Install dependencies
 
 FROM node:18-alpine	as deps
+
+ARG GITHUB_ACCESS_TOKEN
 
 WORKDIR /deps
 COPY package.json .
