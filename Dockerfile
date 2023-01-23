@@ -5,6 +5,7 @@ ARG GITHUB_ACCESS_TOKEN
 WORKDIR /usr/src/app
 
 COPY yarn.lock tsconfig.json package*.json *.yml ./
+COPY deploy.npmrc .npmrc
 COPY src ./src
 COPY resources ./resources
 
@@ -17,6 +18,8 @@ FROM node:18-alpine	as deps
 ARG GITHUB_ACCESS_TOKEN
 
 WORKDIR /deps
+
+COPY deploy.npmrc .npmrc
 COPY package.json .
 COPY yarn.lock .
 RUN yarn install --production --ignore-optional
