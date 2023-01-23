@@ -1,8 +1,8 @@
-import * as jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
 import { VismaSession, VismaSessionUser } from './visma-api'
 import { SigningProfile } from './profiles'
 import { RefreshTokenRepository } from './refresh-tokens'
-import { getEnv } from '../framework/get-env'
+import { getEnv } from '@helsingborg-stad/gdi-api-node'
 
 export interface TokenPayload extends VismaSessionUser {
 	sign_profile: string,

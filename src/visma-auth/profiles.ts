@@ -1,5 +1,5 @@
-import * as ms from 'ms'
-import { getEnv } from '../framework/get-env'
+import ms from 'ms'
+import { getEnv } from '@helsingborg-stad/gdi-api-node'
 
 export interface ProfileService {
     getProfiles(): SigningProfile[],

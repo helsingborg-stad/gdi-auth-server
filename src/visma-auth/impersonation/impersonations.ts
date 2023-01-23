@@ -1,4 +1,4 @@
-import { getEnv } from '../../framework/get-env'
+import { getEnv } from '@helsingborg-stad/gdi-api-node'
 
 export interface Impersonation {
 	id: string

@@ -1,4 +1,4 @@
-import * as request from 'supertest'
+import request from 'supertest'
 import { createFakeServices, createTestApp } from './test-utils'
 import { StatusCodes } from 'http-status-codes'
 

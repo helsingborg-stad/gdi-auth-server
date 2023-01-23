@@ -1,7 +1,7 @@
 import { createImpersonationService, makeImpersonatedSessionId, parseImpersonationsFromEnv, tryGetImpersonatedIdFromSession } from '../impersonation/impersonations'
 import { createFakeServices, createTestApp, notImplemented } from './test-utils'
 import { createImpersonatingVismaService } from '../impersonation/impersonating-visma-service'
-import * as request from 'supertest'
+import request from 'supertest'
 import { StatusCodes } from 'http-status-codes'
 
 describe('parseImpersonationsFromEnv', () => {

@@ -1,5 +1,5 @@
 import { StatusCodes } from 'http-status-codes'
-import { ApplicationContext, ApplicationModule } from '../framework/types'
+import { ApplicationContext, ApplicationModule } from '@helsingborg-stad/gdi-api-node'
 import { AuthServices } from './types'
 
 export function vismaAuthModule(services: AuthServices): ApplicationModule {

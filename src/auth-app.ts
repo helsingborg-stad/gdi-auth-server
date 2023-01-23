@@ -1,8 +1,8 @@
-import { createApplication } from './framework'
-import { healthCheckModule } from './framework/modules/healthcheck-module.ts'
-import swaggerModule from './framework/modules/swagger-module'
-import webFrameworkModule from './framework/modules/web-framework-module'
-import { Application } from './framework/types'
+import { createApplication } from '@helsingborg-stad/gdi-api-node'
+import { healthCheckModule } from '@helsingborg-stad/gdi-api-node'
+import { swaggerModule } from '@helsingborg-stad/gdi-api-node'
+import { webFrameworkModule } from '@helsingborg-stad/gdi-api-node'
+import { Application } from '@helsingborg-stad/gdi-api-node/application'
 import { impersonationModule } from './visma-auth/impersonation/impersonation-module'
 import { AuthServices } from './visma-auth/types'
 import vismaAuthModule from './visma-auth/visma-auth-module'
@@ -14,7 +14,7 @@ export const createAuthApp = ({ services, validateResponse }: {services: AuthSer
 	})
 		.use(({ app }) => { app.proxy = true })
 		.use(webFrameworkModule())
-		.use(swaggerModule())
+		.use(swaggerModule({ routePrefix: '/api/v1/auth/docs/swagger' }))
 		.use(healthCheckModule())
 		.use(vismaAuthModule(services))
 		.use(impersonationModule(services))

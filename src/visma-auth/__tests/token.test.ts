@@ -1,6 +1,6 @@
-import * as request from 'supertest'
+import request from 'supertest'
 import { createFakeServices, createTestApp } from './test-utils'
-import * as jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
 import { StatusCodes } from 'http-status-codes'
 
 const notImplemented = () => { throw new Error('not implemented') }

@@ -1,7 +1,7 @@
 import { StatusCodes } from 'http-status-codes'
-import * as request from 'supertest'
+import request from 'supertest'
 import { createAuthApp } from '../../auth-app'
-import { Application, ApplicationContext } from '../../framework/types'
+import { Application, ApplicationContext } from '@helsingborg-stad/gdi-api-node'
 import { AuthServices } from '../types'
 import { createFakeServices, notImplemented } from './test-utils'
 

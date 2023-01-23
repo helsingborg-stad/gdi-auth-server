@@ -1,5 +1,5 @@
 import { createAuthApp } from '../../auth-app'
-import { Application, ApplicationContext } from '../../framework/types'
+import { Application, ApplicationContext } from '@helsingborg-stad/gdi-api-node'
 import { createImpersonationService } from '../impersonation/impersonations'
 import { createProfileService } from '../profiles'
 import { createNullRefreshTokenRepository } from '../refresh-tokens'

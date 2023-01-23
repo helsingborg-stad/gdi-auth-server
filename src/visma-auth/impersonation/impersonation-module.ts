@@ -1,10 +1,10 @@
-import { ApplicationContext, ApplicationModule } from '../../framework/types'
+import { ApplicationContext, ApplicationModule } from '@helsingborg-stad/gdi-api-node'
 import { AuthServices } from '../types'
-import * as pug from 'pug'
+import pug from 'pug'
 import { join } from 'path'
 import { Impersonation, makeImpersonatedSessionId } from './impersonations'
 
-export const impersonationModule = ({ impersonations }: AuthServices): ApplicationModule => ({ app, router }: ApplicationContext) => {
+export const impersonationModule = ({ impersonations }: AuthServices): ApplicationModule => ({ router }: ApplicationContext) => {
 	if (!impersonations.canImpersonate()) {
 		return
 	}
@@ -14,7 +14,7 @@ export const impersonationModule = ({ impersonations }: AuthServices): Applicati
 		const appendQuery = (url: string, query: Record<string, string>) => Object.entries(query).reduce((u, [ key, value ]) => {
 			u.searchParams.append(key, value)
 			return u	
-		}, new URL(callback_url)).toString()
+		}, new URL(url)).toString()
 		
 		const extendImpersonationWithLoginUrl = (impersonation: Impersonation): Impersonation & {login_url: string} => ({
 			...impersonation,

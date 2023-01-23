@@ -1,7 +1,7 @@
-import * as request from 'superagent'
-import * as Debug from 'debug'
-import { getEnv } from '../framework/get-env'
-import * as Koa from 'koa'
+import request from 'superagent'
+import Debug from 'debug'
+import { getEnv } from '@helsingborg-stad/gdi-api-node'
+import Koa from 'koa'
 const debug = Debug('visma-api')
 
 export interface VismaAuthConfiguration {
