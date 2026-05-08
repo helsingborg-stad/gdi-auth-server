@@ -1,0 +1,32 @@
+services:
+  auth-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      args:
+        GITHUB_ACCESS_TOKEN: ${GITHUB_ACCESS_TOKEN:-}
+    image: gdi-auth-server-dev
+    container_name: gdi-auth-server-dev
+    ports:
+      - "3000:3000"
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      DEBUG: ${DEBUG:-}
+      NODE_ENV: development
+      # tsx uses chokidar; macOS bind mounts don't deliver inotify reliably,
+      # so fall back to polling for hot reload to work consistently.
+      CHOKIDAR_USEPOLLING: "true"
+    volumes:
+      - ./src:/usr/src/app/src
+      - ./resources:/usr/src/app/resources
+      - ./openapi.yml:/usr/src/app/openapi.yml
+      - ./tsconfig.json:/usr/src/app/tsconfig.json
+      - ./jest.config.js:/usr/src/app/jest.config.js
+      - ./package.json:/usr/src/app/package.json
+      - ./yarn.lock:/usr/src/app/yarn.lock
+      - node_modules:/usr/src/app/node_modules
+
+volumes:
+  node_modules:

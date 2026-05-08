@@ -1,0 +1,162 @@
+#!/usr/bin/env bash
+# One-shot dev environment bootstrap. Resolves the GitHub Packages token,
+# bootstraps .env on first run, and starts the auth-server in Docker.
+# Any extra args are forwarded to `docker compose` (or `docker compose up`
+# if the first arg looks like a flag).
+#
+# Usage:
+#   bin/dev                 # start (or restart) the dev container
+#   bin/dev --build         # force rebuild before starting
+#   bin/dev down            # stop everything
+#   bin/dev down -v         # stop and drop the node_modules volume
+
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+# ---------- helpers --------------------------------------------------------
+
+read_env_var() {
+	local key="$1"
+	[[ -f .env ]] || return 1
+	local line
+	line=$(grep -E "^${key}=" .env 2>/dev/null | head -1) || return 1
+	[[ -n "$line" ]] || return 1
+	local val="${line#${key}=}"
+	# Strip optional surrounding quotes.
+	val="${val%\"}"; val="${val#\"}"
+	val="${val%\'}"; val="${val#\'}"
+	[[ -n "$val" ]] || return 1
+	printf '%s' "$val"
+}
+
+write_env_var() {
+	local key="$1" val="$2"
+	if grep -qE "^${key}=" .env 2>/dev/null; then
+		local tmp
+		tmp=$(mktemp)
+		awk -v k="$key" -v v="$val" 'BEGIN{FS=OFS="="} $1==k{$0=k"="v; printed=1} {print} END{if(!printed) print k"="v}' .env > "$tmp"
+		mv "$tmp" .env
+	else
+		printf '\n# Auto-added by bin/dev — do not commit\n%s=%s\n' "$key" "$val" >> .env
+	fi
+}
+
+# Validate a token against api.github.com, return 0 if it has read:packages.
+validate_token() {
+	local token="$1"
+	if ! command -v curl >/dev/null 2>&1; then
+		# Skip validation if curl isn't available — yarn will fail loudly later.
+		return 0
+	fi
+	local headers status scopes
+	headers=$(curl -sS -D - -o /dev/null -H "Authorization: Bearer $token" https://api.github.com/user 2>/dev/null) || {
+		echo "error: could not reach api.github.com to validate token." >&2
+		return 1
+	}
+	status=$(printf '%s' "$headers" | head -1 | awk '{print $2}')
+	if [[ "$status" != "200" ]]; then
+		echo "error: token rejected by GitHub API (HTTP $status)." >&2
+		return 1
+	fi
+	scopes=$(printf '%s' "$headers" | tr -d '\r' | awk -F': ' 'tolower($1)=="x-oauth-scopes"{sub(/^[ \t]+/,"",$2); print $2}')
+	if ! echo "$scopes" | grep -q 'read:packages'; then
+		echo "error: token is missing 'read:packages' scope (got: ${scopes:-none})." >&2
+		return 1
+	fi
+}
+
+prompt_for_token() {
+	if [[ ! -t 0 ]]; then
+		cat >&2 <<-'EOF'
+			error: no GITHUB_ACCESS_TOKEN configured and no terminal available
+			for an interactive prompt. Set it in .env or in your shell:
+
+			  echo 'GITHUB_ACCESS_TOKEN=ghp_yourtokenhere' >> .env
+		EOF
+		exit 1
+	fi
+	cat <<-'EOF'
+
+		gdi-auth-server needs a GitHub access token to install the private
+		@helsingborg-stad/* npm packages. This is a one-time setup; the token
+		will be stored in .env (which is gitignored).
+
+		Open this URL in a browser signed in to GitHub:
+		  https://github.com/settings/tokens/new?scopes=read:packages&description=gdi-auth-server-dev
+
+		Click "Generate token" at the bottom of the page, then copy the value
+		(it starts with ghp_).
+
+	EOF
+	local token=""
+	while [[ -z "$token" ]]; do
+		printf "Paste token (input hidden): "
+		IFS= read -rs token
+		printf "\n"
+		[[ -z "$token" ]] && echo "  empty — try again" >&2
+	done
+	if ! validate_token "$token"; then
+		exit 1
+	fi
+	GITHUB_ACCESS_TOKEN="$token"
+	export GITHUB_ACCESS_TOKEN
+	write_env_var GITHUB_ACCESS_TOKEN "$GITHUB_ACCESS_TOKEN"
+	echo "Token saved to .env."
+}
+
+# ---------- prereqs --------------------------------------------------------
+
+if ! command -v docker >/dev/null 2>&1; then
+	echo "error: docker is not installed. See https://docs.docker.com/get-docker/" >&2
+	exit 1
+fi
+
+if ! docker compose version >/dev/null 2>&1; then
+	echo "error: 'docker compose' (v2) is required. Update Docker Desktop or install the compose plugin." >&2
+	exit 1
+fi
+
+# ---------- .env bootstrap -------------------------------------------------
+
+if [[ ! -f .env ]]; then
+	cp .env.example .env
+	cat <<-EOF
+		.env was missing — created from .env.example.
+		Open .env and fill in the Visma keys (VISMA_AUTH_CUSTOMERKEY,
+		VISMA_AUTH_SERVICEKEY, VISMA_AUTH_BASEURL) before continuing.
+		Then re-run: bin/dev
+	EOF
+	exit 0
+fi
+
+# ---------- token resolution ----------------------------------------------
+
+if [[ -z "${GITHUB_ACCESS_TOKEN:-}" ]]; then
+	# 1) Already persisted in .env
+	if val=$(read_env_var GITHUB_ACCESS_TOKEN); then
+		GITHUB_ACCESS_TOKEN="$val"
+		export GITHUB_ACCESS_TOKEN
+	# 2) Optional shortcut: gh CLI signed in with the right scope
+	elif command -v gh >/dev/null 2>&1 \
+			&& gh auth status >/dev/null 2>&1 \
+			&& gh auth status 2>&1 | grep -qE 'Token scopes:.*read:packages'; then
+		GITHUB_ACCESS_TOKEN="$(gh auth token)"
+		export GITHUB_ACCESS_TOKEN
+		write_env_var GITHUB_ACCESS_TOKEN "$GITHUB_ACCESS_TOKEN"
+		echo "Imported token from gh CLI to .env."
+	# 3) Interactive prompt
+	else
+		prompt_for_token
+	fi
+fi
+
+# ---------- run -----------------------------------------------------------
+
+if [[ $# -eq 0 ]]; then
+	exec docker compose up
+elif [[ "$1" == -* ]]; then
+	exec docker compose up "$@"
+else
+	exec docker compose "$@"
+fi

@@ -1,0 +1,17 @@
+FROM node:18
+
+ARG GITHUB_ACCESS_TOKEN
+
+WORKDIR /usr/src/app
+
+COPY package.json yarn.lock ./
+COPY deploy.npmrc .npmrc
+
+# Install deps, then drop .npmrc so the unresolved ${GITHUB_ACCESS_TOKEN}
+# in it doesn't trip up yarn at container runtime (when the env var is unset).
+RUN yarn install && rm .npmrc
+
+ENV PORT=3000
+EXPOSE 3000
+
+CMD ["yarn", "dev"]

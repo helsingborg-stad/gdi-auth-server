@@ -100,8 +100,18 @@ sequenceDiagram
 
 ### Prerequisites
 
-- [nodejs](https://nodejs.org/en/)
+You can run the server either inside Docker (recommended for new contributors) or directly on your machine.
+
+For Docker:
+- [Docker](https://docs.docker.com/get-docker/) (with Compose v2 — bundled with Docker Desktop)
+
+For running on metal:
+- [nodejs](https://nodejs.org/en/) (v18)
 - [Yarn](https://classic.yarnpkg.com/lang/en/docs/install)
+
+In both cases you need:
+- A **GitHub account** with access to the `helsingborg-stad` org. The Docker setup will prompt you once for a personal access token (scope `read:packages`) and persist it to `.env` — no other tooling required.
+- **Visma Federation credentials** (`VISMA_AUTH_CUSTOMERKEY`, `VISMA_AUTH_SERVICEKEY`, `VISMA_AUTH_BASEURL`). Ask the keymaster.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -110,6 +120,54 @@ sequenceDiagram
 In order to run, some environment variables must be defined. This is easiest to do by
 - ensuring there exists a local `.env` in the project root
 - copy content from [.env.example](.env.example) and change values to what gives meaning
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+### Run with Docker (recommended)
+
+One command:
+
+```sh
+bin/dev
+```
+
+On first run the script:
+1. Copies `.env.example` → `.env` and asks you to fill in the Visma keys.
+2. On the next run, prompts you (once) for a GitHub access token with `read:packages` scope, validates it, and persists it to `.env`. The prompt links you to the right `https://github.com/settings/tokens/new?…` URL — just generate, paste, done.
+3. Builds the image and starts the server.
+
+Subsequent runs reuse the saved token and skip straight to start. The server will be available at [http://localhost:3000](http://localhost:3000) and Swagger at [http://localhost:3000/api/v1/auth/docs/swagger](http://localhost:3000/api/v1/auth/docs/swagger).
+
+Source files under `src/` and `resources/` are bind-mounted into the container, so the server **hot-reloads** on save (via `tsx watch`). `node_modules` lives in a named volume so it survives container restarts and doesn't conflict with anything on the host.
+
+Common commands:
+
+```sh
+# Force rebuild (e.g. after editing the Dockerfile)
+bin/dev --build
+
+# Stop the container
+bin/dev down
+
+# Tear everything down — drops the node_modules volume too.
+# Use this after editing package.json/yarn.lock so the volume gets refreshed.
+bin/dev down -v && bin/dev
+
+# Run tests
+docker compose exec auth-server yarn test
+
+# Run tests in watch mode
+docker compose exec auth-server yarn test --watch
+
+# Coverage report
+docker compose run --rm auth-server yarn coverage
+
+# Add a dependency (writes to package.json + yarn.lock on the host)
+docker compose run --rm auth-server yarn add <package>
+
+# Tail logs
+docker compose logs -f auth-server
+```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
